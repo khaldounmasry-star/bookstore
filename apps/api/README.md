@@ -27,4 +27,4 @@ open http://localhost:3000
 - touch schema.prisma
 - create schema in MySQL: pnpm dlx prisma migrate dev --name init
 - generate prisma client: pnpm dlx prisma generate
-- pnpm dlx prisma studio
+- see a visualisation of the db: pnpm dlx prisma studio
