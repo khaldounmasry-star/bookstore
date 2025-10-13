@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Book {
+  id          Int       @id @default(autoincrement())
+  title       String
+  author      String
+  description String
+  genre       String
+  year        Int?      // publication year, optional
+  rating      Float?    // 0.0–5.0, optional
+  price       Decimal?  @db.Decimal(10, 2)
+  sku         String    @unique
+  covers      Cover[]   // relation: one book → many covers
+  updatedAt   DateTime? @updatedAt
+  createdAt   DateTime  @default(now())
+}
+
+model Person {
+  id          Int       @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  email       String    @unique
+  passwordId  Int?      @unique
+  password    Password? @relation(fields: [passwordId], references: [id])
+  role        Role      @default(USER)
+  updatedAt   DateTime? @updatedAt
+  createdAt   DateTime  @default(now())
+}
+
+model Password {
+  id          Int       @id @default(autoincrement())
+  hash        String
+  person      Person[]
+  createdAt   DateTime  @default(now())
+}
+
+model Cover {
+  id          Int       @id @default(autoincrement())
+  imageUrl    String
+  bookId      Int
+  book        Book      @relation(fields: [bookId], references: [id])
+  updatedAt   DateTime? @updatedAt
+  createdAt   DateTime  @default(now())
+}
+
+enum Role {
+  ADMIN
+  USER
+}
