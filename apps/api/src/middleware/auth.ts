@@ -1,16 +1,33 @@
-import type { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import { verifyToken } from '@utils/jwt';
+import type { Context, Next } from 'hono';
 
-
-export function requireAdmin(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies?.token || req.headers.authorization?.replace("Bearer ", "");
-  if (!token) return res.status(401).json({ error: "Unauthorized" });
-  try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as { role: string };
-    if (payload.role !== "ADMIN") return res.status(403).json({ error: "Forbidden" });
-    (req as any).user = payload;
-    next();
-  } catch {
-    return res.status(401).json({ error: "Unauthorized" });
+export const authMiddleware = async (c: Context, next: Next) => {
+  const header = c.req.header('Authorization');
+  if (!header?.startsWith('Bearer ')) {
+    return c.json({ error: 'Unauthorized' }, 401);
   }
-}
+
+  const token = header.split(' ')[1];
+  const decoded = token ? verifyToken(token) : undefined;
+  if (!decoded) return c.json({ error: 'Invalid token' }, 401);
+
+  c.set('user', decoded);
+  await next();
+};
+
+export const requireRole = (role: 'ADMIN' | 'SUPER_ADMIN') => {
+  return async (c: Context, next: Next) => {
+    const user = c.get('user');
+    if (!user) return c.json({ error: 'Unauthorized' }, 401);
+
+    const allowed =
+      user.role === 'SUPER_ADMIN' ||
+      (role === 'ADMIN' && user.role === 'ADMIN');
+
+    if (!allowed) {
+      return c.json({ error: 'Forbidden: Admin access required' }, 403);
+    }
+
+    await next();
+  };
+};

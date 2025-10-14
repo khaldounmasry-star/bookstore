@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 
-import { prisma } from '../utils'
+import { prisma } from '../utils';
 
 export const misc = new Hono();
 

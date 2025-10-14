@@ -1,5 +1,5 @@
-import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
+import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { secureHeaders } from 'hono/secure-headers';
@@ -9,6 +9,7 @@ import { books }  from '@routes/books';
 import { users }  from '@routes/users';
 import { misc }  from '@routes/misc';
 import { prisma } from '@utils/prisma';
+import { docs } from '@routes/docs';
 
 const app = new Hono();
 
@@ -19,6 +20,7 @@ app.use('*', secureHeaders());
 
 app.route('/books', books);
 app.route('/users', users);
+app.route('/docs', docs);
 app.route('/', misc);
 
 app.onError((err, c) => {
@@ -33,7 +35,7 @@ serve({
   fetch: app.fetch,
   port: 3001
 }, (info) => {
-  console.log(`Server is running on http://localhost:${info.port}`)
+  console.log(`Server is running on http://localhost:${info.port}`);
 });
 
 process.on('SIGINT', async () => {

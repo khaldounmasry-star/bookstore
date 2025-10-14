@@ -1,0 +1,25 @@
+{
+  "arrowParens": "avoid",
+  "bracketSameLine": false,
+  "bracketSpacing": true,
+  "embeddedLanguageFormatting": "off",
+  "endOfLine": "auto",
+  "jsxBracketSameLine": false,
+  "parser": "babel",
+  "printWidth": 100,
+  "proseWrap": "always",
+  "semi": true,
+  "singleAttributePerLine": false,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "none",
+  "useTabs": false,
+  "overrides": [
+    {
+      "files": ["*.ts","*.tsx"],
+      "options": {
+        "parser": "typescript"
+      }
+    }
+  ]
+}

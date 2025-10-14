@@ -9,11 +9,23 @@ async function main() {
 
   const passwordHash = await bcrypt.hash('test1234', 10);
   const adminPassword = await prisma.password.create({
-    data: { hash: passwordHash },
+    data: { hash: passwordHash }
   });
+  const superAdminHash = await bcrypt.hash('supersecret', 10);
+  const superPass = await prisma.password.create({ data: { hash: superAdminHash } });
 
   const userPassword = await prisma.password.create({
-    data: { hash: passwordHash },
+    data: { hash: passwordHash }
+  });
+
+  const superAdmin = await prisma.person.create({
+    data: {
+      firstName: 'Super',
+      lastName: 'Admin',
+      email: 'superadmin@bookstore.com',
+      passwordId: superPass.id,
+      role: 'SUPER_ADMIN'
+    }
   });
 
   const admin = await prisma.person.create({
@@ -22,8 +34,8 @@ async function main() {
       lastName: 'Masry',
       email: 'khaldounmasry@gmail.com',
       role: Role.ADMIN,
-      passwordId: adminPassword.id,
-    },
+      passwordId: adminPassword.id
+    }
   });
 
   const user = await prisma.person.create({
@@ -32,11 +44,11 @@ async function main() {
       lastName: 'M',
       email: 'khaldounm@gmail.com',
       role: Role.USER,
-      passwordId: userPassword.id,
-    },
+      passwordId: userPassword.id
+    }
   });
 
-  console.log(`Users created: admin - ${admin.email}, user - ${user.email}`);
+  console.log(`Users created: super admin: ${superAdmin.email}, admin - ${admin.email}, user - ${user.email}`);
 
   console.log('Seeding 200 books...');
 
@@ -50,7 +62,7 @@ async function main() {
     const price = parseFloat(faker.commerce.price({ min: 5, max: 60, dec: 2 }));
     const sku = faker.string.uuid();
 
-    const book = await prisma.book.create({
+    await prisma.book.create({
       data: {
         title,
         author,
@@ -62,13 +74,13 @@ async function main() {
         sku,
         covers: {
           create: Array.from({ length: 5 }).map(() => ({
-            imageUrl: faker.image.urlLoremFlickr({ category: 'books' }),
-          })),
-        },
-      },
+            imageUrl: faker.image.urlLoremFlickr({ category: 'books' })
+          }))
+        }
+      }
     });
 
-    if (i % 20 === 0) console.log(`Created ${i} books...`);
+    if (i !== 0 && i % 20 === 0) console.log(`Created ${i} books...`);
   }
 
   console.log('Terminating script: Done seeding 200 books and 2 users');

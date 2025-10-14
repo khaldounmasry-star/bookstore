@@ -53,4 +53,5 @@ model Cover {
 enum Role {
   ADMIN
   USER
+  SUPER_ADMIN
 }
