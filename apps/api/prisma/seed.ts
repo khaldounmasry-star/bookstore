@@ -58,7 +58,7 @@ async function main() {
     const description = faker.lorem.sentence({ min: 8, max: 16 });
     const genre = faker.book.genre();
     const year = faker.number.int({ min: 1950, max: 2024 });
-    const rating = faker.number.float({ min: 0, max: 5, precision: 0.1 });
+    const rating = faker.number.float({ min: 0, max: 5, fractionDigits: 1 });
     const price = parseFloat(faker.commerce.price({ min: 5, max: 60, dec: 2 }));
     const sku = faker.string.uuid();
 
@@ -74,7 +74,8 @@ async function main() {
         sku,
         covers: {
           create: Array.from({ length: 5 }).map(() => ({
-            imageUrl: faker.image.urlLoremFlickr({ category: 'books' })
+            // imageUrl: faker.image.urlLoremFlickr({ category: 'books' })
+            imageUrl: `https://picsum.photos/seed/${Math.random()}-${i}/500/800`
           }))
         }
       }
