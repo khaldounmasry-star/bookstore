@@ -21,6 +21,7 @@
     "hono-rate-limit": "^1.0.2",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^6.17.1",
+    "sanitize-html": "^2.17.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {

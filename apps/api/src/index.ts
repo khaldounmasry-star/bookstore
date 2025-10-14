@@ -15,7 +15,7 @@ const app = new Hono();
 
 app.use('*', cors());
 app.use('*', logger());
-app.use('*', rateLimiter({ windowMs: 60 * 1000, max: 100 }));
+app.use('*', rateLimiter({ windowMs: 60 * 1000, limit: 100 }));
 app.use('*', secureHeaders());
 
 app.route('/books', books);

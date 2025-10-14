@@ -141,6 +141,51 @@ docs.get('/swagger.json', (c) =>
           responses: { 204: { description: 'Book deleted' } }
         }
       },
+      '/books/search': {
+        get: {
+          tags: ['Books'],
+          summary: 'Search books by title, author, description or genre',
+          description:
+            'Search for books by partial title, author name, description or genre. Supports pagination using limit and offset query parameters.',
+          parameters: [
+            {
+              name: 'q',
+              in: 'query',
+              required: false,
+              schema: { type: 'string' },
+              description: 'Search query (title or author substring)'
+            },
+            {
+              name: 'limit',
+              in: 'query',
+              required: false,
+              schema: { type: 'integer', default: 10 },
+              description: 'Number of results to return'
+            },
+            {
+              name: 'offset',
+              in: 'query',
+              required: false,
+              schema: { type: 'integer', default: 0 },
+              description: 'Number of results to skip (for pagination)'
+            }
+          ],
+          responses: {
+            200: {
+              description: 'List of matching books',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'array',
+                    items: { $ref: '#/components/schemas/Book' }
+                  }
+                }
+              }
+            },
+            400: { description: 'Invalid query parameters' }
+          }
+        }
+      },
       '/users/register': {
         post: {
           tags: ['Users'],
@@ -192,6 +237,30 @@ docs.get('/swagger.json', (c) =>
           responses: {
             201: { description: 'Admin created' },
             403: { description: 'Forbidden — requires SUPER_ADMIN role' }
+          }
+        }
+      },
+      '/users/{id}': {
+        delete: {
+          tags: ['Users'],
+          summary: 'Delete a user by ID (Admin or Super Admin only)',
+          description:
+            'Deletes a user (person) by their unique ID. Only ADMIN and SUPER_ADMIN roles are allowed to perform this action.',
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            {
+              name: 'id',
+              in: 'path',
+              required: true,
+              schema: { type: 'integer' },
+              description: 'ID of the user to delete'
+            }
+          ],
+          responses: {
+            204: { description: 'User deleted successfully' },
+            401: { description: 'Unauthorized – missing or invalid token' },
+            403: { description: 'Forbidden – requires ADMIN or SUPER_ADMIN role' },
+            404: { description: 'User not found' }
           }
         }
       }
