@@ -25,7 +25,7 @@ export const requireRole = (role: 'ADMIN' | 'SUPER_ADMIN') => {
       (role === 'ADMIN' && user.role === 'ADMIN');
 
     if (!allowed) {
-      return c.json({ error: 'Forbidden: Admin access required' }, 403);
+      return c.json({ error: 'Forbidden: Higher user role required' }, 403);
     }
 
     await next();

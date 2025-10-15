@@ -82,6 +82,48 @@ docs.get('/swagger.json', (c) =>
             email: { type: 'string', format: 'email' },
             password: { type: 'string', format: 'password' }
           }
+        },
+        Cover: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer' },
+            imageUrl: { type: 'string', format: 'uri' },
+            bookId: { type: 'integer' },
+            updatedAt: { type: 'string', format: 'date-time', nullable: true },
+            createdAt: { type: 'string', format: 'date-time' }
+          },
+          required: ['id', 'imageUrl', 'bookId', 'createdAt']
+        },
+        CreateCoverInput: {
+          type: 'object',
+          oneOf: [
+            {
+              properties: {
+                imageUrl: { type: 'string', format: 'uri' }
+              },
+              required: ['imageUrl'],
+              additionalProperties: false
+            },
+            {
+              properties: {
+                imageUrls: {
+                  type: 'array',
+                  items: { type: 'string', format: 'uri' },
+                  minItems: 1
+                }
+              },
+              required: ['imageUrls'],
+              additionalProperties: false
+            }
+          ]
+        },
+        UpdateCoverInput: {
+          type: 'object',
+          properties: {
+            imageUrl: { type: 'string', format: 'uri' }
+          },
+          required: ['imageUrl'],
+          additionalProperties: false
         }
       }
     },
@@ -186,6 +228,100 @@ docs.get('/swagger.json', (c) =>
           }
         }
       },
+      '/books/{id}/covers': {
+        'post': {
+          'tags': ['Books'],
+          'summary': 'Add one or many covers to a book (Admin only)',
+          'security': [{ 'bearerAuth': [] }],
+          'parameters': [
+            { 'name': 'id', 'in': 'path', 'required': true, 'schema': { 'type': 'integer' } }
+          ],
+          'requestBody': {
+            'required': true,
+            'content': {
+              'application/json': {
+                'schema': { '$ref': '#/components/schemas/CreateCoverInput' }
+              }
+            }
+          },
+          'responses': {
+            '201': {
+              'description': 'Cover(s) created',
+              'content': {
+                'application/json': {
+                  'schema': {
+                    'type': 'object',
+                    'properties': {
+                      'message': { 'type': 'string' },
+                      'covers': {
+                        'type': 'array',
+                        'items': { '$ref': '#/components/schemas/Cover' }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            '400': { 'description': 'Invalid book ID or request body' },
+            '401': { 'description': 'Unauthorized' },
+            '403': { 'description': 'Forbidden — requires ADMIN role' },
+            '404': { 'description': 'Book not found' }
+          }
+        }
+      },
+      '/books/covers/{coverId}': {
+        'put': {
+          'tags': ['Books'],
+          'summary': 'Update a cover by ID (Admin only)',
+          'security': [{ 'bearerAuth': [] }],
+          'parameters': [
+            { 'name': 'coverId', 'in': 'path', 'required': true, 'schema': { 'type': 'integer' } }
+          ],
+          'requestBody': {
+            'required': true,
+            'content': {
+              'application/json': {
+                'schema': { '$ref': '#/components/schemas/UpdateCoverInput' }
+              }
+            }
+          },
+          'responses': {
+            '200': {
+              'description': 'Cover updated',
+              'content': {
+                'application/json': {
+                  'schema': {
+                    'type': 'object',
+                    'properties': {
+                      'message': { 'type': 'string' },
+                      'cover': { '$ref': '#/components/schemas/Cover' }
+                    }
+                  }
+                }
+              }
+            },
+            '400': { 'description': 'Invalid cover ID or request body' },
+            '401': { 'description': 'Unauthorized' },
+            '403': { 'description': 'Forbidden — requires ADMIN role' },
+            '404': { 'description': 'Cover not found' }
+          }
+        },
+        'delete': {
+          'tags': ['Books'],
+          'summary': 'Delete a cover by ID (Admin only)',
+          'security': [{ 'bearerAuth': [] }],
+          'parameters': [
+            { 'name': 'coverId', 'in': 'path', 'required': true, 'schema': { 'type': 'integer' } }
+          ],
+          'responses': {
+            '204': { 'description': 'Cover deleted' },
+            '400': { 'description': 'Invalid cover ID' },
+            '401': { 'description': 'Unauthorized' },
+            '403': { 'description': 'Forbidden — requires ADMIN role' },
+            '404': { 'description': 'Cover not found' }
+          }
+        }
+      },
       '/users/register': {
         post: {
           tags: ['Users'],
@@ -243,9 +379,9 @@ docs.get('/swagger.json', (c) =>
       '/users/{id}': {
         delete: {
           tags: ['Users'],
-          summary: 'Delete a user by ID (Admin or Super Admin only)',
+          summary: 'Delete a user by ID (Super Admin only)',
           description:
-            'Deletes a user (person) by their unique ID. Only ADMIN and SUPER_ADMIN roles are allowed to perform this action.',
+            'Deletes a user (person) by their unique ID. Only SUPER_ADMIN role is allowed to perform this action.',
           security: [{ bearerAuth: [] }],
           parameters: [
             {
@@ -258,8 +394,8 @@ docs.get('/swagger.json', (c) =>
           ],
           responses: {
             204: { description: 'User deleted successfully' },
-            401: { description: 'Unauthorized – missing or invalid token' },
-            403: { description: 'Forbidden – requires ADMIN or SUPER_ADMIN role' },
+            401: { description: 'Unauthorized' },
+            403: { description: 'Forbidden: Higher user role required' },
             404: { description: 'User not found' }
           }
         }

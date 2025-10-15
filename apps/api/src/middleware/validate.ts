@@ -2,12 +2,8 @@ import { ZodError, ZodType } from 'zod';
 import type { Context, Next } from 'hono';
 import sanitizeHtml from 'sanitize-html';
 
-/**
- * Recursively sanitizes all string fields in an object or array.
- */
 function sanitizeInput<T>(input: T): T {
   if (typeof input === 'string') {
-    // remove all HTML/script tags entirely, not escape them
     return sanitizeHtml(input, {
       allowedTags: [],
       allowedAttributes: {},
@@ -30,9 +26,6 @@ function sanitizeInput<T>(input: T): T {
   return input;
 }
 
-/**
- * Hono middleware: sanitize + validate + attach parsed data
- */
 export const validateMiddleware =
   <T>(schema: ZodType<T>, type: 'json' | 'query' | 'param' = 'json') =>
   async (c: Context, next: Next) => {
@@ -44,13 +37,8 @@ export const validateMiddleware =
           ? Object.fromEntries(c.req.query() ?? [])
           : c.req.param();
 
-      // 🧼 sanitize before validation
       const sanitized = sanitizeInput(raw);
-
-      // ✅ validate sanitized object
       const parsed = schema.parse(sanitized);
-
-      // store validated + clean data for use in handler
       c.set('validated', parsed);
 
       await next();

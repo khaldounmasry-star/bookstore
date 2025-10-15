@@ -7,24 +7,18 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Script invoked: Seeding database...');
 
-  const passwordHash = await bcrypt.hash('test1234', 10);
-  const adminPassword = await prisma.password.create({
-    data: { hash: passwordHash }
-  });
-  const superAdminHash = await bcrypt.hash('supersecret', 10);
-  const superPass = await prisma.password.create({ data: { hash: superAdminHash } });
-
-  const userPassword = await prisma.password.create({
-    data: { hash: passwordHash }
-  });
+  const commonHash = await bcrypt.hash('test1234', 10);
+  const superHash  = await bcrypt.hash('supersecret', 10);
 
   const superAdmin = await prisma.person.create({
     data: {
       firstName: 'Super',
       lastName: 'Admin',
       email: 'superadmin@bookstore.com',
-      passwordId: superPass.id,
-      role: 'SUPER_ADMIN'
+      role: 'SUPER_ADMIN',
+      passwords: {
+        create: [{ hash: superHash }]
+      }
     }
   });
 
@@ -34,7 +28,9 @@ async function main() {
       lastName: 'Masry',
       email: 'khaldounmasry@gmail.com',
       role: Role.ADMIN,
-      passwordId: adminPassword.id
+      passwords: {
+        create: [{ hash: commonHash }]
+      }
     }
   });
 
@@ -44,15 +40,20 @@ async function main() {
       lastName: 'M',
       email: 'khaldounm@gmail.com',
       role: Role.USER,
-      passwordId: userPassword.id
+      passwords: {
+        create: [{ hash: commonHash }]
+      }
     }
   });
 
-  console.log(`Users created: super admin: ${superAdmin.email}, admin - ${admin.email}, user - ${user.email}`);
+  console.log(`Users created:
+  - super admin: ${superAdmin.email}
+  - admin:       ${admin.email}
+  - user:        ${user.email}`);
 
   console.log('Seeding 200 books...');
 
-  for (let i = 0; i < 200; i++) {
+  for (let i = 1; i <= 200; i++) {
     const title = faker.commerce.productName();
     const author = faker.person.fullName();
     const description = faker.lorem.sentence({ min: 8, max: 16 });
@@ -73,18 +74,17 @@ async function main() {
         price,
         sku,
         covers: {
-          create: Array.from({ length: 5 }).map(() => ({
-            // imageUrl: faker.image.urlLoremFlickr({ category: 'books' })
-            imageUrl: `https://picsum.photos/seed/${Math.random()}-${i}/500/800`
+          create: Array.from({ length: 5 }).map((_, idx) => ({
+            imageUrl: `https://picsum.photos/seed/book-${i}-img-${idx}/500/800`
           }))
         }
       }
     });
 
-    if (i !== 0 && i % 20 === 0) console.log(`Created ${i} books...`);
+    if (i % 20 === 0) console.log(`Created ${i} books...`);
   }
 
-  console.log('Terminating script: Done seeding 200 books and 2 users');
+  console.log('Terminating script: Done seeding 200 books and 3 users');
 }
 
 main()
