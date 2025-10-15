@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import { ThemeProvider } from '@mui/material/styles';
+import theme from '../theme';
+import { NavBar } from "../components/NavBar";
+import CssBaseline from "@mui/material/CssBaseline";
+import Container from "@mui/material/Container";
+
 
 
 export const metadata: Metadata = {
@@ -15,7 +21,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
+        <AppRouterCacheProvider
+          options={{ key: 'css' }}
+        >
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <NavBar />
+            <Container
+              maxWidth="xl"
+              sx={{
+                mt: 4,
+                mb: 4,
+              }}
+            >
+            {children}
+            </Container>
+          </ThemeProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );

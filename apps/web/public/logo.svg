@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 140">
+  <!-- Stylized B made of two colored halves -->
+  <path d="M30 20h60a25 25 0 0 1 0 50H30V20z" fill="#f83d7b" stroke="#333" stroke-width="10" stroke-linejoin="round"></path>
+  <path d="M30 70h60a25 25 0 0 1 0 50H30V70z" fill="#f57c20" stroke="#333" stroke-width="10" stroke-linejoin="round"></path>
+
+  <!-- BOOK STORE text -->
+  <text x="120" y="60" font-family="Poppins, sans-serif" font-size="46" font-weight="700" fill="#333">BOOK</text>
+  <text x="120" y="115" font-family="Poppins, sans-serif" font-size="46" font-weight="700" fill="#333">STORE</text>
+</svg>
