@@ -29,35 +29,35 @@ function sanitizeInput<T>(input: T): T {
 
 export const validateMiddleware =
   <T>(schema: ZodType<T>, type: 'json' | 'query' | 'param' = 'json') =>
-  async (c: Context, next: Next) => {
-    try {
-      const raw =
-        type === 'json'
-          ? await c.req.json()
-          : type === 'query'
-          ? Object.fromEntries(new URL(c.req.url).searchParams)
-          : c.req.param();
+    async (c: Context, next: Next) => {
+      try {
+        const raw =
+          type === 'json'
+            ? await c.req.json()
+            : type === 'query'
+              ? Object.fromEntries(new URL(c.req.url).searchParams)
+              : c.req.param();
 
-      const sanitized = sanitizeInput(raw);
-      const parsed = schema.parse(sanitized);
-      c.set('validated', parsed);
+        const sanitized = sanitizeInput(raw);
+        const parsed = schema.parse(sanitized);
+        c.set('validated', parsed);
 
-      return next();
-    } catch (err) {
-      logger.error('Validation error:', err);
-      if (err instanceof ZodError) {
-        return c.json(
-          {
-            error: 'ValidationError',
-            issues: err.issues.map((i) => ({
-              path: i.path.join('.'),
-              message: i.message
-            }))
-          },
-          400
-        );
+        return next();
+      } catch (err) {
+        logger.error('Validation error:', err);
+        if (err instanceof ZodError) {
+          return c.json(
+            {
+              error: 'ValidationError',
+              issues: err.issues.map((i) => ({
+                path: i.path.join('.'),
+                message: i.message
+              }))
+            },
+            400
+          );
+        }
+
+        throw err;
       }
-
-      throw err;
-    }
-  };
+    };
