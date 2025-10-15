@@ -12,7 +12,7 @@ export const authMiddleware = async (c: Context, next: Next) => {
   if (!decoded) return c.json({ error: 'Invalid token' }, 401);
 
   c.set('user', decoded);
-  await next();
+  return next();
 };
 
 export const requireRole = (role: 'ADMIN' | 'SUPER_ADMIN') => {
@@ -28,6 +28,6 @@ export const requireRole = (role: 'ADMIN' | 'SUPER_ADMIN') => {
       return c.json({ error: 'Forbidden: Higher user role required' }, 403);
     }
 
-    await next();
+    return next();
   };
 };

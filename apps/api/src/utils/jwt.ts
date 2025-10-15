@@ -1,15 +1,19 @@
-import jwt from 'jsonwebtoken';
+import jwt, { type JwtPayload, type SignOptions, type Secret } from 'jsonwebtoken';
 
-const JWT_SECRET = process.env['JWT_SECRET'] || 'dev_secret_key';
+const JWT_SECRET: Secret = process.env['JWT_SECRET'] ?? '';
+const WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
 
-export const signToken = (payload: object, expiresIn = '7d') => {
+export function signToken(
+  payload: object,
+  expiresIn: SignOptions['expiresIn'] = WEEK_IN_SECONDS
+) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn });
-};
+}
 
-export const verifyToken = (token: string) => {
+export function verifyToken<T extends object = JwtPayload>(token: string): T | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
+    return jwt.verify(token, JWT_SECRET) as T;
   } catch {
     return null;
   }
-};
+}

@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { secureHeaders } from 'hono/secure-headers';
-import rateLimiter from 'hono-rate-limit';
+import { rateLimiter } from 'hono-rate-limiter';
 
 import { books }  from '@routes/books';
 import { users }  from '@routes/users';
@@ -15,7 +15,11 @@ const app = new Hono();
 
 app.use('*', cors());
 app.use('*', logger());
-app.use('*', rateLimiter({ windowMs: 60 * 1000, limit: 100 }));
+app.use('*', rateLimiter({
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  keyGenerator: (): string => 'global'
+}));
 app.use('*', secureHeaders());
 
 app.route('/books', books);

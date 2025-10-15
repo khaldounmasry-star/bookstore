@@ -34,14 +34,14 @@ export const validateMiddleware =
         type === 'json'
           ? await c.req.json()
           : type === 'query'
-          ? Object.fromEntries(c.req.query() ?? [])
+          ? Object.fromEntries(new URL(c.req.url).searchParams)
           : c.req.param();
 
       const sanitized = sanitizeInput(raw);
       const parsed = schema.parse(sanitized);
       c.set('validated', parsed);
 
-      await next();
+      return next();
     } catch (err) {
       if (err instanceof ZodError) {
         return c.json(
