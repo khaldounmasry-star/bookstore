@@ -3,6 +3,7 @@ import z from 'zod';
 import { Hono } from 'hono';
 import { prisma } from '@utils/prisma';
 import { signToken } from '@utils/jwt';
+import { logger } from '@utils/logger';
 import { createPersonSchema, getPersonSchema } from '@schemas/personSchema';
 import { validateMiddleware } from '@middleware/validate';
 import { authMiddleware, requireRole } from '@middleware/auth';
@@ -15,7 +16,10 @@ users.post('/register', validateMiddleware(createPersonSchema), async (c) => {
   const { firstName, lastName, email, password } = body;
 
   const existing = await prisma.person.findUnique({ where: { email } });
-  if (existing) return c.json({ error: 'Email already exists' }, 400);
+  if (existing){
+    logger.error(`Registration failed: ${email} already exists`);
+    return c.json({ error: 'Email already exists' }, 400);
+  }
 
   const hash = await bcrypt.hash(password, 10);
 
@@ -26,12 +30,14 @@ users.post('/register', validateMiddleware(createPersonSchema), async (c) => {
       email,
       role: 'USER',
       passwords: {
-        create: [{ hash }] // new schema: Password has personId FK
+        create: [{ hash }]
       }
     }
   });
 
   const token = signToken({ id: newUser.id, role: newUser.role, email: newUser.email });
+  logger.info(`New user registered: ${email}`);
+
   return c.json({ message: 'User registered', token });
 });
 
@@ -43,19 +49,30 @@ users.post('/login', validateMiddleware(getPersonSchema), async (c) => {
     where: { email },
     select: { id: true, email: true, role: true }
   });
-  if (!person) return c.json({ error: 'Invalid email' }, 401);
+  if (!person) {
+    logger.error(`Login failed: ${email} not found`);
+    return c.json({ error: 'Invalid email' }, 401);
+  }
 
   const latest = await prisma.password.findFirst({
     where: { personId: person.id },
     orderBy: { createdAt: 'desc' },
     select: { hash: true }
   });
-  if (!latest) return c.json({ error: 'No password set' }, 401);
+  if (!latest) {
+    logger.error(`Login failed: ${email} has no password set`);
+    return c.json({ error: 'No password set' }, 401);
+  }
 
   const valid = await bcrypt.compare(password, latest.hash);
-  if (!valid) return c.json({ error: 'Invalid password' }, 401);
+  if (!valid) {
+    logger.error(`Login failed: ${email} invalid password`);
+    return c.json({ error: 'Invalid password' }, 401);
+  }
 
   const token = signToken({ id: person.id, role: person.role, email: person.email });
+  logger.info(`User logged in: ${email}`);
+
   return c.json({ message: 'Login success', role: person.role, token });
 });
 
@@ -70,8 +87,10 @@ users.post(
     const { firstName, lastName, email, password } = body;
 
     const existing = await prisma.person.findUnique({ where: { email } });
-    if (existing) return c.json({ error: 'Email already exists' }, 400);
-
+    if (existing) {
+      logger.error(`Admin creation failed: ${email} already exists`);
+      return c.json({ error: 'Email already exists' }, 400);
+    }
     const hash = await bcrypt.hash(password, 10);
 
     const admin = await prisma.person.create({
@@ -86,18 +105,27 @@ users.post(
       }
     });
 
+    logger.info(`New admin created: ${email}`);
+
     return c.json({ message: 'Admin created', admin });
   }
 );
 
 users.delete('/:id', requireRole(Role.SUPER_ADMIN), async (c) => {
   const id = Number(c.req.param('id'));
-  if (isNaN(id)) return c.json({ error: 'Invalid user ID' }, 400);
+  if (isNaN(id)) {
+    logger.error(`Invalid user ID: ${c.req.param('id')}`);
+    return c.json({ error: 'Invalid user ID' }, 400);
+  }
 
   const person = await prisma.person.findUnique({ where: { id } });
-  if (!person) return c.json({ error: `User ${id} not found` }, 404);
+  if (!person) {
+    logger.error(`User ${id} not found`);
+    return c.json({ error: `User ${id} not found` }, 404);
+  }
 
   await prisma.person.delete({ where: { id } });
+  logger.info(`User ${id} deleted`);
 
   return c.json({ message: `User ${id} deleted successfully` });
 });

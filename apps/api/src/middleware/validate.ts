@@ -1,6 +1,7 @@
 import { ZodError, ZodType } from 'zod';
 import type { Context, Next } from 'hono';
 import sanitizeHtml from 'sanitize-html';
+import { logger } from '@utils/logger';
 
 function sanitizeInput<T>(input: T): T {
   if (typeof input === 'string') {
@@ -43,6 +44,7 @@ export const validateMiddleware =
 
       return next();
     } catch (err) {
+      logger.error('Validation error:', err);
       if (err instanceof ZodError) {
         return c.json(
           {
