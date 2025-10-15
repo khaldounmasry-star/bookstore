@@ -40,6 +40,65 @@ books.get('/search', async (c) => {
   return c.json(found);
 });
 
+books.get('/filter', async (c) => {
+  const genre = c.req.query('genre');
+  const sort = c.req.query('sort') ?? 'title';
+  const order = c.req.query('order') ?? 'asc';
+  const limit = Number(c.req.query('limit') ?? 10);
+  const offset = Number(c.req.query('offset') ?? 0);
+
+  logger.info('Incoming /books/filter request', {
+    query: { genre, sort, order, limit, offset }
+  });
+
+  try {
+    const validSortFields = ['title', 'price', 'rating'];
+    const validOrder = ['asc', 'desc'];
+
+    if (!validSortFields.includes(sort)) {
+      logger.warn(`Invalid sort field: ${sort}`);
+
+      return c.json(
+        { error: `Invalid sort field. Use one of: ${validSortFields.join(', ')}` },
+        400
+      );
+    }
+
+    if (!validOrder.includes(order)) {
+      logger.warn(`Invalid sort order: ${order}`);
+
+      return c.json({ error: 'Invalid order. Use asc or desc.' }, 400);
+    }
+
+    const where = genre ? { genre } : {};
+
+    const books = await prisma.book.findMany({
+      where,
+      orderBy: { [sort]: order },
+      skip: offset,
+      take: limit,
+      include: {
+        covers: { take: 1, orderBy: { id: 'asc' } }
+      }
+    });
+
+    logger.info(`Retrieved ${books.length} book(s)`, {
+      genre: genre || 'all',
+      sort,
+      order,
+      limit,
+      offset
+    });
+
+    return c.json({ count: books.length, results: books });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    logger.error(`Error filtering books: ${message}`, { err });
+
+    return c.json({ error: 'Failed to retrieve books' }, 500);
+  }
+});
+
 books.get('/', async (c) => {
   const allBooks = await prisma.book.findMany({
     include: { covers: true },

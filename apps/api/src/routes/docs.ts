@@ -228,6 +228,86 @@ docs.get('/swagger.json', (c) =>
           }
         }
       },
+      '/books/filter': {
+        'get': {
+          'tags': ['Books'],
+          'summary': 'Filter and sort books by genre, title, price, or rating',
+          'description': 'Retrieve books optionally filtered by genre and sorted by title, price, or rating. Supports pagination with limit and offset.',
+          'parameters': [
+            {
+              'name': 'genre',
+              'in': 'query',
+              'required': false,
+              'schema': { 'type': 'string' },
+              'description': 'Filter books by exact genre (case-sensitive match).'
+            },
+            {
+              'name': 'sort',
+              'in': 'query',
+              'required': false,
+              'schema': {
+                'type': 'string',
+                'enum': ['title', 'price', 'rating'],
+                'default': 'title'
+              },
+              'description': 'Field to sort by.'
+            },
+            {
+              'name': 'order',
+              'in': 'query',
+              'required': false,
+              'schema': {
+                'type': 'string',
+                'enum': ['asc', 'desc'],
+                'default': 'asc'
+              },
+              'description': 'Sort order: ascending or descending.'
+            },
+            {
+              'name': 'limit',
+              'in': 'query',
+              'required': false,
+              'schema': { 'type': 'integer', 'default': 10, 'minimum': 1 },
+              'description': 'Number of results to return (default 10).'
+            },
+            {
+              'name': 'offset',
+              'in': 'query',
+              'required': false,
+              'schema': { 'type': 'integer', 'default': 0, 'minimum': 0 },
+              'description': 'Number of results to skip (for pagination).'
+            }
+          ],
+          'responses': {
+            '200': {
+              'description': 'Filtered and/or sorted list of books',
+              'content': {
+                'application/json': {
+                  'schema': {
+                    'type': 'object',
+                    'properties': {
+                      'count': {
+                        'type': 'integer',
+                        'description': 'Number of books returned in this response.'
+                      },
+                      'results': {
+                        'type': 'array',
+                        'items': { '$ref': '#/components/schemas/Book' }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            '400': {
+              'description': 'Invalid query parameters (e.g., unsupported sort field or order).'
+            },
+            '500': {
+              'description': 'Server error while filtering or sorting books.'
+            }
+          }
+        }
+      },
       '/books/{id}/covers': {
         'post': {
           'tags': ['Books'],
