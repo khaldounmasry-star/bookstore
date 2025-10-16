@@ -30,6 +30,16 @@ export const SearchFilterDrawer = ({ genres, open, onClose }: SearchFilterDrawer
   const [order, setOrder] = useState(searchParams.get('order') ?? 'asc');
   const [limit, setLimit] = useState(Number(searchParams.get('limit')) || 200);
 
+  const handleReset = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setGenre('');
+    setSort('');
+    setOrder('asc');
+    setLimit(200);
+    router.push('/');
+    onClose();
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
@@ -70,7 +80,7 @@ export const SearchFilterDrawer = ({ genres, open, onClose }: SearchFilterDrawer
           onChange={e => setGenre(e.target.value)}
           fullWidth
         >
-          {genres.map(opt => (
+          {genres?.map(opt => (
             <MenuItem key={opt} value={opt}>
               {opt}
             </MenuItem>
@@ -111,6 +121,9 @@ export const SearchFilterDrawer = ({ genres, open, onClose }: SearchFilterDrawer
           fullWidth
         />
         <Box sx={{ flexGrow: 1 }} />
+        <Button variant="outlined" color="primary" fullWidth onClick={handleReset}>
+          Reset Filters
+        </Button>
         <Button variant="contained" color="primary" type="submit" fullWidth>
           Apply Filters
         </Button>

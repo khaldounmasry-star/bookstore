@@ -1,0 +1,1 @@
+export { SearchTitle } from './SearchTitle';

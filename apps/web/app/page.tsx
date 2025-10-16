@@ -1,8 +1,9 @@
 import Grid from '@mui/material/Grid';
-import { Book, FilterResults } from '../types';
+import { FilterResults } from '../types';
 import { BookCard } from '../components/book-card';
 import { SearchFilter } from '../components/search-filter';
 import { Stack, Typography } from '@mui/material';
+import { Loading } from '../components/loading';
 
 export const revalidate = 60;
 
@@ -43,6 +44,10 @@ export default async function Home({ searchParams }: HomeProps) {
 
   const filterRes: FilterResults = await res.json();
   const { results, genres } = filterRes;
+
+  if (!results || !genres) {
+    return <Loading />;
+  }
 
   return (
     <Stack spacing={4} sx={{ width: '100%', p: 4 }}>

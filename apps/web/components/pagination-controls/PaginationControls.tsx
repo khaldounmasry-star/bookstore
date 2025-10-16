@@ -44,9 +44,27 @@ export const PaginationControls = ({ limit, offset, total }: PaginationControlsP
         </span>
       </Tooltip>
 
-      <Typography variant="h1" color="text.secondary" sx={{ minWidth: 80, textAlign: 'center' }}>
-        Page {Math.floor(offset / limit) + 1}
-      </Typography>
+      <Tooltip title={`Page ${Math.floor(offset / limit) + 1}`}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 48,
+            height: 48,
+            borderRadius: '50%',
+            bgcolor: 'primary.main',
+            color: 'primary.contrastText',
+            boxShadow: 2,
+            fontWeight: 'bold',
+            fontSize: '1.1rem'
+          }}
+        >
+          <Typography variant="body1" fontWeight="bold">
+            {Math.floor(offset / limit) + 1}
+          </Typography>
+        </Box>
+      </Tooltip>
 
       <Tooltip title="Next page">
         <span>

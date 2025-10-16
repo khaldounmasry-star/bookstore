@@ -1,9 +1,9 @@
 import Grid from '@mui/material/Grid';
 import { Book, SearchProps } from '../../types';
-import { SearchCard } from '../../components/search-card';
-import Stack from '@mui/material/Stack';
-import { Typography } from '@mui/material';
 import { PaginationControls } from '../../components/pagination-controls';
+import { SearchTitle } from '../../components/search-title';
+import { SearchCard } from '../../components/search-card';
+import { Stack } from '@mui/material';
 
 const SearchPage = async ({ searchParams }: SearchProps) => {
   const { q, limit, offset } = await searchParams;
@@ -17,18 +17,17 @@ const SearchPage = async ({ searchParams }: SearchProps) => {
   );
 
   const books: Book[] = await res.json();
+  const hasResults = books.length > 0;
 
   return (
     <Grid container spacing={3} justifyContent="center" alignItems="flex-start">
       <Stack spacing={2} width="100%">
-        <Typography variant="h5" color="text.primary">
-          Results for &quot;{q}&quot;
-        </Typography>
+        <SearchTitle query={query} hasResults={hasResults} />
         {books.map(book => (
           <SearchCard key={book.id} book={book} />
         ))}
       </Stack>
-      {books.length > 0 && (
+      {hasResults && (
         <PaginationControls limit={limitation} offset={offsetting} total={books.length} />
       )}
     </Grid>
