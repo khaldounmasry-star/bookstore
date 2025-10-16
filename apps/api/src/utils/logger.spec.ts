@@ -16,7 +16,6 @@ describe('logger utility', () => {
     process.env['NODE_ENV'] = 'test';
 
     jest.resetModules();
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { logger: testLogger } = require('@utils/logger');
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

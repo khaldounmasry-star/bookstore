@@ -52,16 +52,21 @@ describe('books routes (public endpoints)', () => {
 
   describe('GET /books/filter', () => {
     it('returns filtered books successfully', async () => {
-      (prisma.book.findMany as jest.Mock).mockResolvedValue([
-        { id: 1, title: 'SciFi Book', genre: 'Sci-Fi' }
-      ]);
+      (prisma.book.findMany as jest.Mock)
+        .mockResolvedValueOnce([
+          { id: 1, title: 'SciFi Book', genre: 'Sci-Fi' }
+        ])
+        .mockResolvedValueOnce([
+          { genre: 'Sci-Fi' }
+        ]);
 
       const res = await app.request('/books/filter?genre=Sci-Fi&sort=title&order=asc');
       const data = await res.json();
 
       expect(res.status).toBe(200);
       expect(data.count).toBe(1);
-      expect(data.results[0].genre).toBe('Sci-Fi');
+      expect(data.genres).toEqual(['Sci-Fi']);
+      expect(data.results[0]).toEqual({ genre: 'Sci-Fi', title: 'SciFi Book', id: 1 });
     });
 
     it('returns 400 for invalid sort field', async () => {

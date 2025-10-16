@@ -82,6 +82,11 @@ books.get('/filter', async (c) => {
       }
     });
 
+    const genres = await prisma.book.findMany({
+      distinct: ['genre'],
+      select: { genre: true }
+    });
+
     logger.info(`Retrieved ${books.length} book(s)`, {
       genre: genre || 'all',
       sort,
@@ -90,7 +95,7 @@ books.get('/filter', async (c) => {
       offset
     });
 
-    return c.json({ count: books.length, results: books });
+    return c.json({ count: books.length, results: books, genres: genres.map(g => g.genre) });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     logger.error(`Error filtering books: ${message}`, { err });
@@ -163,7 +168,7 @@ books.put('/:id',
 
     const body = c.get('validated') as z.infer<typeof updateBookSchema>;
     const data = Object.fromEntries(
-      Object.entries(body).filter(([_, v]) => v !== undefined)
+      Object.entries(body).filter(([, v]) => v !== undefined)
     );
 
     try {
