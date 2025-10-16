@@ -40,6 +40,7 @@ export interface PaginationControlsProps {
 }
 
 export interface FilterResults {
+  genres: string[];
   results: Book[];
   total: number;
 }

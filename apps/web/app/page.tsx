@@ -42,8 +42,7 @@ export default async function Home({ searchParams }: HomeProps) {
   }
 
   const filterRes: FilterResults = await res.json();
-  const { results } = filterRes;
-  const genres = [...new Set(results.map((book: Book) => book.genre))];
+  const { results, genres } = filterRes;
 
   return (
     <Stack spacing={4} sx={{ width: '100%', p: 4 }}>
