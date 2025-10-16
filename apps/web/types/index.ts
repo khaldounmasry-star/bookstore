@@ -24,11 +24,11 @@ export interface SearchProps {
 
 export type BookDetailProps = {
   book: Book;
-}
+};
 
 export type GalleryDisplayProps = {
   covers: Book['covers'];
   title: string;
   currentImage: number;
   direction: number;
-}
+};

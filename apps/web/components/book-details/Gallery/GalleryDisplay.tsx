@@ -5,7 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Box, CardMedia, Typography } from '@mui/material';
 import { GalleryDisplayProps } from '../../../types';
 
-export const GalleryDisplay: FC<GalleryDisplayProps> = ({ covers, title, currentImage, direction }) => {
+export const GalleryDisplay: FC<GalleryDisplayProps> = ({
+  covers,
+  title,
+  currentImage,
+  direction
+}) => {
   const hasImages = covers && covers.length > 0;
 
   return (
@@ -18,7 +23,7 @@ export const GalleryDisplay: FC<GalleryDisplayProps> = ({ covers, title, current
         boxShadow: 3,
         overflow: 'hidden',
         backgroundColor: 'rgba(0,0,0,0.04)',
-        position: 'relative',
+        position: 'relative'
       }}
     >
       {hasImages ? (
@@ -29,16 +34,16 @@ export const GalleryDisplay: FC<GalleryDisplayProps> = ({ covers, title, current
             variants={{
               enter: (dir: number) => ({
                 x: dir > 0 ? 40 : -40,
-                opacity: 0,
+                opacity: 0
               }),
               center: {
                 x: 0,
-                opacity: 1,
+                opacity: 1
               },
               exit: (dir: number) => ({
                 x: dir > 0 ? -40 : 40,
-                opacity: 0,
-              }),
+                opacity: 0
+              })
             }}
             initial="enter"
             animate="center"
@@ -49,7 +54,7 @@ export const GalleryDisplay: FC<GalleryDisplayProps> = ({ covers, title, current
               top: 0,
               left: 0,
               width: '100%',
-              height: '100%',
+              height: '100%'
             }}
           >
             <CardMedia
@@ -59,7 +64,7 @@ export const GalleryDisplay: FC<GalleryDisplayProps> = ({ covers, title, current
               sx={{
                 width: '100%',
                 height: '100%',
-                objectFit: 'cover',
+                objectFit: 'cover'
               }}
             />
           </motion.div>
@@ -72,7 +77,7 @@ export const GalleryDisplay: FC<GalleryDisplayProps> = ({ covers, title, current
             position: 'absolute',
             top: '50%',
             left: '50%',
-            transform: 'translate(-50%, -50%)',
+            transform: 'translate(-50%, -50%)'
           }}
         >
           No Image Available

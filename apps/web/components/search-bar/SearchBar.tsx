@@ -12,7 +12,7 @@ const Search = styled('form')(({ theme }) => ({
   backgroundColor: alpha(theme.palette.common.white, 0.15),
   '&:hover': { backgroundColor: alpha(theme.palette.common.white, 0.25) },
   marginLeft: theme.spacing(3),
-  width: 'auto',
+  width: 'auto'
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -22,7 +22,7 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   pointerEvents: 'none',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'center'
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -34,8 +34,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
     width: '12ch',
-    '&:focus': { width: '20ch' },
-  },
+    [theme.breakpoints.up('md')]: {
+      '&:focus': {
+        width: '20ch'
+      }
+    }
+  }
 }));
 
 export const SearchBar = () => {
@@ -60,4 +64,4 @@ export const SearchBar = () => {
       />
     </Search>
   );
-}
+};

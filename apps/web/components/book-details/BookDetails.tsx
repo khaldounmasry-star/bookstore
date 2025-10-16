@@ -11,7 +11,7 @@ export const BookDetails = ({ book }: { book: Book }) => (
       gap: 4,
       p: 4,
       maxWidth: 1200,
-      mx: 'auto',
+      mx: 'auto'
     }}
   >
     <CoversGallery {...book} />

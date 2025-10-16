@@ -14,7 +14,7 @@ export const SearchCard = ({ book }: { book: Book }) => {
           borderRadius: 3,
           boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
           transition: 'all 0.2s ease',
-          '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 6px 18px rgba(0,0,0,0.12)' },
+          '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 6px 18px rgba(0,0,0,0.12)' }
         }}
       >
         <Avatar
@@ -38,4 +38,4 @@ export const SearchCard = ({ book }: { book: Book }) => {
       </Card>
     </Link>
   );
-}
+};

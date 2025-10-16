@@ -14,6 +14,7 @@
     "@typescript-eslint/parser": "^8.46.1",
     "eslint": "^9.34.0",
     "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.5.4",
     "prettier": "^3.6.2",
     "turbo": "^2.5.8",
     "typescript": "5.9.2"

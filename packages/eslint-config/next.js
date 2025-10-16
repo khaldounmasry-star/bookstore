@@ -1,5 +1,6 @@
 import js from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
+import eslintPluginPrettier from "eslint-plugin-prettier";
 import tseslint from "typescript-eslint";
 import pluginReactHooks from "eslint-plugin-react-hooks";
 import pluginReact from "eslint-plugin-react";
@@ -38,12 +39,29 @@ export const nextJsConfig = [
   {
     plugins: {
       "react-hooks": pluginReactHooks,
+      prettier: eslintPluginPrettier,
     },
     settings: { react: { version: "detect" } },
     rules: {
       ...pluginReactHooks.configs.recommended.rules,
       // React scope no longer necessary with new JSX transform.
       "react/react-in-jsx-scope": "off",
+
+      // Enforce Prettier formatting rules via ESLint
+      "prettier/prettier": [
+        "error",
+        {
+          endOfLine: "auto",
+          printWidth: 100,
+          singleQuote: true,
+          trailingComma: "none",
+          semi: true,
+          tabWidth: 2,
+          useTabs: false,
+          bracketSpacing: true,
+          arrowParens: "avoid",
+        },
+      ],
     },
   },
 ];

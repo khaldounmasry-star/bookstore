@@ -1,5 +1,5 @@
-import { Rating } from "@mui/material";
-import { Book } from "../../types";
+import { Rating } from '@mui/material';
+import { Book } from '../../types';
 
 export const Ratings = ({ book }: { book: Book }) => (
   <Rating
@@ -10,4 +10,4 @@ export const Ratings = ({ book }: { book: Book }) => (
     size="large"
     readOnly
   />
-)
+);

@@ -7,7 +7,7 @@ const BookPage = async ({ params }: { params: { id: string } }) => {
   const { id } = await params;
 
   const res = await fetch(`http://localhost:3001/books/${id}`, {
-    next: { revalidate: 30 },
+    next: { revalidate: 30 }
   });
 
   if (!res.ok) {

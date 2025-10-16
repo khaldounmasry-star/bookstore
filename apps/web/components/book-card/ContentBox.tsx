@@ -14,7 +14,7 @@ export const ContentBox: FC<Book> = ({ title, author }) => (
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'flex-end',
-      color: 'white',
+      color: 'white'
     }}
   >
     <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>

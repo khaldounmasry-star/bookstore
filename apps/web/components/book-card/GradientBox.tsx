@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC } from 'react';
 import { Box } from '@mui/material';
 
 export const GradientBox: FC = () => (
@@ -11,7 +11,7 @@ export const GradientBox: FC = () => (
       height: '45%',
       background:
         'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 100%)',
-      zIndex: 2,
+      zIndex: 2
     }}
   />
 );

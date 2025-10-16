@@ -23,7 +23,7 @@ const SearchPage = async ({ searchParams }: SearchProps) => {
         <Typography variant="h5" color="text.primary">
           Results for &quot;{q}&quot;
         </Typography>
-        {books.map((book) => (
+        {books.map(book => (
           <SearchCard key={book.id} book={book} />
         ))}
       </Stack>

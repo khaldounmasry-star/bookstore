@@ -13,12 +13,12 @@ export const CoversGallery: FC<{ covers: Book['covers']; title: string }> = ({ c
 
   const nextImage = () => {
     setDirection(1);
-    setCurrentImage((prev) => (prev + 1) % covers.length);
+    setCurrentImage(prev => (prev + 1) % covers.length);
   };
 
   const prevImage = () => {
     setDirection(-1);
-    setCurrentImage((prev) => (prev - 1 + covers.length) % covers.length);
+    setCurrentImage(prev => (prev - 1 + covers.length) % covers.length);
   };
 
   return (
@@ -28,11 +28,21 @@ export const CoversGallery: FC<{ covers: Book['covers']; title: string }> = ({ c
         flex: 1,
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'center'
       }}
     >
-      <GalleryDisplay covers={covers} title={title} currentImage={currentImage} direction={direction} />
-      <GalleryNav onPrev={prevImage} onNext={nextImage} total={covers.length} hasImages={hasImages} />
+      <GalleryDisplay
+        covers={covers}
+        title={title}
+        currentImage={currentImage}
+        direction={direction}
+      />
+      <GalleryNav
+        onPrev={prevImage}
+        onNext={nextImage}
+        total={covers.length}
+        hasImages={hasImages}
+      />
     </Box>
   );
 };

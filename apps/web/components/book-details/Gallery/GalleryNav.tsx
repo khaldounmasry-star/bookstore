@@ -26,7 +26,7 @@ export const GalleryNav: FC<GalleryNavProps> = ({ onPrev, onNext, total, hasImag
           top: '50%',
           transform: 'translateY(-50%)',
           bgcolor: 'background.paper',
-          '&:hover': { bgcolor: 'grey.100' },
+          '&:hover': { bgcolor: 'grey.100' }
         }}
       >
         <ArrowBack />
@@ -42,7 +42,7 @@ export const GalleryNav: FC<GalleryNavProps> = ({ onPrev, onNext, total, hasImag
           top: '50%',
           transform: 'translateY(-50%)',
           bgcolor: 'background.paper',
-          '&:hover': { bgcolor: 'grey.100' },
+          '&:hover': { bgcolor: 'grey.100' }
         }}
       >
         <ArrowForward />
