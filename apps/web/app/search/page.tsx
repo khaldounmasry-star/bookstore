@@ -28,7 +28,9 @@ const SearchPage = async ({ searchParams }: SearchProps) => {
           <SearchCard key={book.id} book={book} />
         ))}
       </Stack>
-      {books.length > 0 && <PaginationControls limit={limitation} offset={offsetting} total={books.length} />}
+      {books.length > 0 && (
+        <PaginationControls limit={limitation} offset={offsetting} total={books.length} />
+      )}
     </Grid>
   );
 };

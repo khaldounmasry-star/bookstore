@@ -38,3 +38,8 @@ export interface PaginationControlsProps {
   offset: number;
   total: number;
 }
+
+export interface FilterResults {
+  results: Book[];
+  total: number;
+}

@@ -5,11 +5,7 @@ import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { PaginationControlsProps } from '../../types';
 
-export const PaginationControls = ({
-  limit,
-  offset,
-  total,
-}: PaginationControlsProps) => {
+export const PaginationControls = ({ limit, offset, total }: PaginationControlsProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -32,7 +28,7 @@ export const PaginationControls = ({
         justifyContent: 'center',
         alignItems: 'center',
         gap: 2,
-        mt: 3,
+        mt: 3
       }}
     >
       <Tooltip title="Previous page">
@@ -48,11 +44,7 @@ export const PaginationControls = ({
         </span>
       </Tooltip>
 
-      <Typography
-        variant="h1"
-        color="text.secondary"
-        sx={{ minWidth: 80, textAlign: 'center' }}
-      >
+      <Typography variant="h1" color="text.secondary" sx={{ minWidth: 80, textAlign: 'center' }}>
         Page {Math.floor(offset / limit) + 1}
       </Typography>
 

@@ -1,9 +1,8 @@
 import Grid from '@mui/material/Grid';
-import { Book } from '../types';
+import { Book, FilterResults } from '../types';
 import { BookCard } from '../components/book-card';
 import { SearchFilter } from '../components/search-filter';
 import { Stack, Typography } from '@mui/material';
-import { b } from 'framer-motion/client';
 
 export const revalidate = 60;
 
@@ -18,39 +17,40 @@ interface HomeProps {
 }
 
 export default async function Home({ searchParams }: HomeProps) {
-  const { genre = '', sort = '', order = 'asc', limit = 200, offset = 0 } = await searchParams || {};
-  // const genre = searchParams?.genre ?? '';
-  // const sort = searchParams?.sort ?? 'title';
-  // const order = searchParams?.order ?? 'asc';
-  // const limit = Number(searchParams?.limit ?? 200);
-  // const offset = Number(searchParams?.offset ?? 0);
+  const {
+    genre = '',
+    sort = 'title',
+    order = 'asc',
+    limit = 200,
+    offset = 0
+  } = (await searchParams) ?? {};
 
   const params = new URLSearchParams({
     ...(genre && { genre }),
     sort,
     order,
     limit: String(limit),
-    offset: String(offset),
+    offset: String(offset)
   });
 
   const res = await fetch(`http://localhost:3001/books/filter?${params.toString()}`, {
-    next: { revalidate: 60 },
+    next: { revalidate: 60 }
   });
 
   if (!res.ok) {
     throw new Error('Failed to fetch books');
   }
 
-  const books: Book[] = await res.json();
+  const filterRes: FilterResults = await res.json();
+  const { results } = filterRes;
+  const genres = [...new Set(results.map((book: Book) => book.genre))];
 
   return (
     <Stack spacing={4} sx={{ width: '100%', p: 4 }}>
       <Typography variant="h4" textAlign="center" fontWeight="bold">
         Explore Our Collection
       </Typography>
-
-      <SearchFilter />
-
+      <SearchFilter genres={genres} />
       <Grid
         container
         spacing={3}
@@ -58,7 +58,7 @@ export default async function Home({ searchParams }: HomeProps) {
         alignItems="flex-start"
         sx={{ width: '100%', margin: '0 auto' }}
       >
-        {books.results.map(book => (
+        {results.map(book => (
           <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={book.id}>
             <BookCard book={book} />
           </Grid>
