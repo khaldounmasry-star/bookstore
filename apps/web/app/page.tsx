@@ -1,18 +1,7 @@
 import Grid from '@mui/material/Grid';
-import { BookCard } from '../components/BookCard';
+import { BookCard } from '../components/book-card';
+import { Book } from '../types';
 
-interface Cover {
-  imageUrl: string;
-}
-
-interface Book {
-  id: number;
-  title: string;
-  author: string;
-  genre?: string;
-  year?: number;
-  covers: Cover[];
-}
 
 export default async function Home() {
   const res = await fetch('http://localhost:3001/books', {
