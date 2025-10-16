@@ -1,0 +1,1 @@
+export { CoversGallery } from './CoversGallery';

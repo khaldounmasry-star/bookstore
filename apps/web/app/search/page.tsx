@@ -5,12 +5,13 @@ import Stack from '@mui/material/Stack';
 import { Typography } from '@mui/material';
 
 const SearchPage = async ({ searchParams }: SearchProps) => {
-  const q = searchParams.q ?? '';
-  const limit = searchParams.limit ?? 5;
-  const offset = searchParams.offset ?? 0;
+  const { q, limit, offset } = await searchParams;
+  const query = q ?? '';
+  const limitation = limit ?? 5;
+  const offsetting = offset ?? 0;
 
   const res = await fetch(
-    `http://localhost:3001/books/search?q=${encodeURIComponent(q)}&limit=${limit}&offset=${offset}`,
+    `http://localhost:3001/books/search?q=${encodeURIComponent(query)}&limit=${limitation}&offset=${offsetting}`,
     { next: { revalidate: 30 } }
   );
 
