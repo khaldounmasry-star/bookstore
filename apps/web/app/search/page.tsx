@@ -3,12 +3,13 @@ import { Book, SearchProps } from '../../types';
 import { SearchCard } from '../../components/search-card';
 import Stack from '@mui/material/Stack';
 import { Typography } from '@mui/material';
+import { PaginationControls } from '../../components/pagination-controls';
 
 const SearchPage = async ({ searchParams }: SearchProps) => {
   const { q, limit, offset } = await searchParams;
   const query = q ?? '';
-  const limitation = limit ?? 5;
-  const offsetting = offset ?? 0;
+  const limitation = Number(limit ?? 5);
+  const offsetting = Number(offset ?? 0);
 
   const res = await fetch(
     `http://localhost:3001/books/search?q=${encodeURIComponent(query)}&limit=${limitation}&offset=${offsetting}`,
@@ -18,7 +19,10 @@ const SearchPage = async ({ searchParams }: SearchProps) => {
   const books: Book[] = await res.json();
 
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} sx={{
+      justifyContent: "center",
+      alignItems: "center",
+    }}>
       <Stack spacing={2} width="100%">
         <Typography variant="h5" color="text.primary">
           Results for &quot;{q}&quot;
@@ -27,6 +31,7 @@ const SearchPage = async ({ searchParams }: SearchProps) => {
           <SearchCard key={book.id} book={book} />
         ))}
       </Stack>
+      {books.length > 0 && <PaginationControls limit={limitation} offset={offsetting} total={books.length} />}
     </Grid>
   );
 };

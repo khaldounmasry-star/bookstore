@@ -32,3 +32,9 @@ export type GalleryDisplayProps = {
   currentImage: number;
   direction: number;
 };
+
+export interface PaginationControlsProps {
+  limit: number;
+  offset: number;
+  total: number;
+}
