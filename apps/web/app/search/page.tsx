@@ -19,10 +19,7 @@ const SearchPage = async ({ searchParams }: SearchProps) => {
   const books: Book[] = await res.json();
 
   return (
-    <Grid container spacing={3} sx={{
-      justifyContent: "center",
-      alignItems: "center",
-    }}>
+    <Grid container spacing={3} justifyContent="center" alignItems="flex-start">
       <Stack spacing={2} width="100%">
         <Typography variant="h5" color="text.primary">
           Results for &quot;{q}&quot;
