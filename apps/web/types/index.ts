@@ -44,3 +44,21 @@ export interface FilterResults {
   results: Book[];
   total: number;
 }
+
+export interface SearchFilterDrawerProps {
+  genres: string[];
+  open: boolean;
+  onClose: () => void;
+}
+
+export enum Role {
+  ADMIN = 'ADMIN',
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  USER = 'USER'
+}
+
+export type LoginResponse = {
+  message: string;
+  token: string;
+  role: Role;
+};

@@ -10,9 +10,9 @@ const theme = createTheme({
       paper: '#FFFFFF'
     },
     primary: {
-      main: '#2563EB',
-      light: '#3B82F6',
-      dark: '#1D4ED8',
+      main: '#000000',
+      light: '#575757ff',
+      dark: '#383838ff',
       contrastText: '#FFFFFF'
     },
     secondary: {

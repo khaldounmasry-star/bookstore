@@ -1,26 +1,27 @@
+import { notFound } from 'next/dist/client/components/navigation';
 import { BookDetails } from '../../../components/book-details';
-import { Book } from '../../../types';
+import { booksApi } from '../../../lib/api';
+import { ApiError } from '../../../lib/api/error';
 
-export const revalidate = 30;
-
-const BookPage = async ({ params }: { params: { id: string } }) => {
+export default async function BookPage({ params }: { params: { id: string } }) {
   const { id } = await params;
 
-  const res = await fetch(`http://localhost:3001/books/${id}`, {
-    next: { revalidate: 30 }
-  });
+  try {
+    const book = await booksApi.getBook(Number(id));
 
-  if (!res.ok) {
-    return (
-      <div style={{ padding: 40 }}>
-        <h2>Book not found</h2>
-      </div>
-    );
+    return <BookDetails book={book} />;
+  } catch (error) {
+    if (error instanceof ApiError) {
+      if (error.status === 404) {
+        notFound();
+      }
+
+      return (
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <h2>Something went wrong</h2>
+          <p>{error.message}</p>
+        </div>
+      );
+    }
   }
-
-  const book: Book = await res.json();
-
-  return <BookDetails book={book} />;
-};
-
-export default BookPage;
+}

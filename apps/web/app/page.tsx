@@ -1,9 +1,9 @@
 import Grid from '@mui/material/Grid';
-import { FilterResults } from '../types';
 import { BookCard } from '../components/book-card';
 import { SearchFilter } from '../components/search-filter';
 import { Stack, Typography } from '@mui/material';
 import { Loading } from '../components/loading';
+import { booksApi } from '../lib/api';
 
 export const revalidate = 60;
 
@@ -20,30 +20,20 @@ interface HomeProps {
 export default async function Home({ searchParams }: HomeProps) {
   const {
     genre = '',
-    sort = 'title',
-    order = 'asc',
-    limit = 200,
+    sort = 'rating',
+    order = 'desc',
+    limit = 16,
     offset = 0
   } = (await searchParams) ?? {};
 
-  const params = new URLSearchParams({
-    ...(genre && { genre }),
+  const res = await booksApi.filterBooks({
+    genre,
     sort,
     order,
-    limit: String(limit),
-    offset: String(offset)
+    limit: Number(limit),
+    offset: Number(offset)
   });
-
-  const res = await fetch(`http://localhost:3001/books/filter?${params.toString()}`, {
-    next: { revalidate: 60 }
-  });
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch books');
-  }
-
-  const filterRes: FilterResults = await res.json();
-  const { results, genres } = filterRes;
+  const { results, genres } = res;
 
   if (!results || !genres) {
     return <Loading />;

@@ -3,6 +3,7 @@
 import { Drawer, Box, TextField, MenuItem, Button, Typography } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { SearchFilterDrawerProps } from '../../types';
 
 const sortOptions = [
   { label: 'Title', value: 'title' },
@@ -14,12 +15,6 @@ const orderOptions = [
   { label: 'Ascending', value: 'asc' },
   { label: 'Descending', value: 'desc' }
 ];
-
-interface SearchFilterDrawerProps {
-  genres: string[];
-  open: boolean;
-  onClose: () => void;
-}
 
 export const SearchFilterDrawer = ({ genres, open, onClose }: SearchFilterDrawerProps) => {
   const router = useRouter();
