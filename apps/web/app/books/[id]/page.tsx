@@ -12,7 +12,7 @@ export default async function BookPage({ params }: { params: { id: string } }) {
     return <BookDetails book={book} />;
   } catch (error) {
     if (error instanceof ApiError) {
-      if (error.status === 404) {
+      if (error.isNotFoundError()) {
         notFound();
       }
 

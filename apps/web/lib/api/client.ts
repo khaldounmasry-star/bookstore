@@ -1,4 +1,4 @@
-import { ApiError } from './error';
+import { ApiError, ValidationIssue } from './error';
 
 export class ApiClient {
   private baseUrl: string;
@@ -19,15 +19,26 @@ export class ApiClient {
     const res = await fetch(`${this.baseUrl}${endpoint}`, { ...options, headers });
 
     if (!res.ok) {
-      let message: string;
+      let message = `HTTP ${res.status}`;
+      let issues: ValidationIssue[] | undefined;
+
       try {
         const data = await res.json();
-        message = data.message || JSON.stringify(data);
+        if (data.error === 'ValidationError' && Array.isArray(data.issues)) {
+          message = data.error;
+          issues = data.issues;
+        } else if (data.message) {
+          message = data.message;
+        } else if (typeof data === 'string') {
+          message = data;
+        } else {
+          message = JSON.stringify(data);
+        }
       } catch {
         message = await res.text();
       }
 
-      throw new ApiError(res.status, message);
+      throw new ApiError(res.status, message, issues);
     }
 
     if (res.status === 204) return {} as T;

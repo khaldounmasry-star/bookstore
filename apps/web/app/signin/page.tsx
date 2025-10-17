@@ -17,29 +17,56 @@ import { usersApi } from '../../lib/api';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ApiClient } from '../../lib/api/client';
-import { LoginResponse, Role } from '../../types';
+import { Role } from '../../types';
+import { ApiError } from '../../lib/api/error';
 
 export default function SignInPage() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [emailError, setEmailError] = useState<string | undefined>(undefined);
+  const [passwordError, setPasswordError] = useState<string | undefined>(undefined);
 
   const router = useRouter();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setEmailError(undefined);
+    setPasswordError(undefined);
     setEmail(e.target.value);
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setEmailError(undefined);
+    setPasswordError(undefined);
     setPassword(e.target.value);
   };
 
   const handleSubmit = async (): Promise<void> => {
-    const res = await usersApi.login({ email, password });
-    const { token: apiToken, role } = res as LoginResponse;
-    const client = new ApiClient();
-    client.setToken(apiToken);
-    localStorage.setItem('user_status', apiToken);
-    router.push(role === Role.USER ? '/' : '/admin');
+    try {
+      const { token: apiToken, role } = await usersApi.login({ email, password });
+      const client = new ApiClient();
+      client.setToken(apiToken);
+      localStorage.setItem('user_status', apiToken);
+      router.push(role === Role.USER ? '/' : '/admin');
+    } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.isValidationError()) {
+          error.issues?.forEach(issue => {
+            if (issue.path === 'email') setEmailError(issue.message);
+            if (issue.path === 'password') setPasswordError(issue.message);
+          });
+          return;
+        }
+        if (error.isAuthorisationError()) {
+          if (error.message.includes('email')) {
+            setEmailError('Invalid email');
+          } else {
+            setPasswordError('Invalid password');
+          }
+          return;
+        }
+      }
+      throw error;
+    }
   };
 
   return (
@@ -72,19 +99,24 @@ export default function SignInPage() {
 
         <Box component="form" noValidate>
           <TextField
+            error={Boolean(emailError)}
             label="Email address"
+            type="email"
             variant="outlined"
             fullWidth
             margin="normal"
             onChange={handleEmailChange}
+            helperText={emailError || ''}
           />
           <TextField
+            error={Boolean(passwordError)}
             label="Password"
             type="password"
             variant="outlined"
             fullWidth
             margin="normal"
             onChange={handlePasswordChange}
+            helperText={passwordError || ''}
           />
 
           <Box
