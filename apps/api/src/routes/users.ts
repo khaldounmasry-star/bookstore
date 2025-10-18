@@ -18,7 +18,7 @@ users.post('/register', validateMiddleware(createPersonSchema), async (c) => {
   const existing = await prisma.person.findUnique({ where: { email } });
   if (existing){
     logger.error(`Registration failed: ${email} already exists`);
-    return c.json({ error: 'Email already exists' }, 400);
+    return c.json({ error: 'Email already exists' }, 409);
   }
 
   const hash = await bcrypt.hash(password, 10);
