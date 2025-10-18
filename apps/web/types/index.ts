@@ -87,9 +87,21 @@ export interface AuthContextType {
 
 export interface SideBarProps {
   role: 'ADMIN' | 'SUPER_ADMIN';
-};
+}
 
 export type SideBarToggleProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export type User = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: Role;
+};
+
+export type UsersTableProps = {
+  users: User[];
 };

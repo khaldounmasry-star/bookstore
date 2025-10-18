@@ -8,6 +8,7 @@ jest.mock('@utils/prisma', () => ({
   prisma: {
     person: {
       findUnique: jest.fn(),
+      findMany: jest.fn(),
       create: jest.fn(),
       delete: jest.fn()
     },
@@ -87,7 +88,7 @@ describe('users routes', () => {
       });
 
       const data = await res.json();
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(409);
       expect(data.error).toContain('exists');
       expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('already exists'));
     });
@@ -256,6 +257,22 @@ describe('users routes', () => {
       expect(res.status).toBe(404);
       expect(data.error).toContain('not found');
       expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('not found'));
+    });
+  });
+
+  describe('GET /users', () => {
+    it('returns all users', async () => {
+      (prisma.person.findMany as jest.Mock).mockResolvedValue([
+        { id: 1, firstName: 'personA', lastName: 'personAA', email: 'personA@gmail.com' },
+        { id: 1, firstName: 'personB', lastName: 'personBB', email: 'personB@gmail.com' },
+      ]);
+
+      const res = await app.request('/users');
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data).toHaveLength(2);
+      expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('Returning all users (2)'));
     });
   });
 });

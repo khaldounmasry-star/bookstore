@@ -441,6 +441,17 @@ docs.get('/swagger.json', (c) =>
           }
         }
       },
+      '/users': {
+        get: {
+          tags: ['Users'],
+          summary: 'Get a list of users (Super Admin only)',
+          security: [{ bearerAuth: [] }],
+          responses: {
+            200: { description: 'Users returned' },
+            401: { description: 'Unauthorised — requires SUPER_ADMIN role' }
+          }
+        }
+      },
       '/users/create-admin': {
         post: {
           tags: ['Users'],

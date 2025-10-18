@@ -78,6 +78,16 @@ users.post('/login', validateMiddleware(getPersonSchema), async (c) => {
 
 users.use('*', authMiddleware);
 
+users.get('/', requireRole(Role.SUPER_ADMIN), async (c) => {
+  const allUsers = await prisma.person.findMany({
+    orderBy: { id: 'asc' }
+  });
+
+  logger.info(`Returning all users (${allUsers.length})`);
+
+  return c.json(allUsers);
+});
+
 users.post(
   '/create-admin',
   requireRole(Role.SUPER_ADMIN),
