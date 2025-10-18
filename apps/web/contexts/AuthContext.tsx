@@ -3,11 +3,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { setCookie } from '../lib';
+import { redirect } from 'next/navigation';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   token?: string | null;
-  login: (token: string) => void;
+  login: (token: string, role: string) => void;
   logout: () => void;
 }
 
@@ -31,6 +32,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     Cookies.remove('token', { path: '/' });
     Cookies.remove('role', { path: '/' });
     setToken(null);
+    redirect('/');
   };
 
   return (
@@ -52,5 +54,6 @@ export const useAuth = (): AuthContextType => {
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
+
   return context;
 };
