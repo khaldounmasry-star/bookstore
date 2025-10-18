@@ -1,35 +1,51 @@
 import { apiClient } from './client';
 import { Book, FilterResults } from '../../types';
+import { init } from './init';
 
 export const booksApi = {
-  fetchBooks: (): Promise<Book[]> => apiClient.request<Book[]>(`/books`),
+  fetchBooks: async (): Promise<Book[]> => {
+    const client = await init();
+    return client.request<Book[]>(`/books`);
+  },
 
-  searchBooks: (params: { q: string; limit?: number; offset?: number }): Promise<Book[]> => {
+  searchBooks: async (params: { q: string; limit?: number; offset?: number }): Promise<Book[]> => {
     const query = new URLSearchParams(
       Object.entries(params).map(([k, v]) => [k, String(v)])
     ).toString();
 
-    return apiClient.request<Book[]>(`/books/search?${query}`);
+    const client = await init();
+    return client.request<Book[]>(`/books/search?${query}`);
   },
 
-  filterBooks: (params: {
+  filterBooks: async (params: {
     genre?: string;
     sort?: string;
     order?: string;
     limit?: number;
     offset?: number;
   }) => {
+    const client = await init();
     const query = new URLSearchParams(params as Record<string, string>).toString();
-    return apiClient.request<FilterResults>(`/books/filter?${query}`);
+    return client.request<FilterResults>(`/books/filter?${query}`);
   },
 
-  getBook: (id: number) => apiClient.request<Book>(`/books/${id}`),
+  getBook: async (id: number) => {
+    const client = await init();
+    return client.request<Book>(`/books/${id}`);
+  },
 
-  createBook: (data: Record<string, unknown>) =>
-    apiClient.request<Book>(`/books`, { method: 'POST', body: JSON.stringify(data) }),
+  createBook: async (data: Record<string, unknown>) => {
+    const client = await init();
+    return client.request<Book>(`/books`, { method: 'POST', body: JSON.stringify(data) });
+  },
 
-  updateBook: (id: number, data: Record<string, unknown>) =>
-    apiClient.request<Book>(`/books/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  updateBook: async (id: number, data: Record<string, unknown>) => {
+    const client = await init();
+    return client.request<Book>(`/books/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
 
-  deleteBook: (id: number) => apiClient.request<void>(`/books/${id}`, { method: 'DELETE' })
+  deleteBook: async (id: number) => {
+    const client = await init();
+    return client.request<void>(`/books/${id}`, { method: 'DELETE' });
+  }
 };

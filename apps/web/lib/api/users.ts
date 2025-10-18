@@ -1,9 +1,9 @@
 import { apiClient } from './client';
-import { LoginResponse } from '../../types';
+import { LoginResponse, SignUpResponse } from '../../types';
 
 export const usersApi = {
   register: (data: { firstName: string; lastName: string; email: string; password: string }) =>
-    apiClient.request(`/users/register`, { method: 'POST', body: JSON.stringify(data) }),
+    apiClient.request<SignUpResponse>(`/users/register`, { method: 'POST', body: JSON.stringify(data) }),
 
   login: (data: { email: string; password: string }) =>
     apiClient.request<LoginResponse>(`/users/login`, {

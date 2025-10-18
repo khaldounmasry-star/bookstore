@@ -63,6 +63,11 @@ export type LoginResponse = {
   role: Role;
 };
 
+export type SignUpResponse = {
+  message: string;
+  token: string;
+};
+
 export interface ValidationIssue {
   path: string | string[];
   message: string;

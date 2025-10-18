@@ -14,7 +14,15 @@ import { logger as appLogger } from '@utils/logger';
 
 const app = new Hono();
 
-app.use('*', cors());
+app.use(
+  '*',
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+    allowHeaders: ['Content-Type', 'Authorization'],
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+  })
+);
 app.use('*', requestLogger);
 app.use('*', errorLogger);
 app.use('*', rateLimiter({

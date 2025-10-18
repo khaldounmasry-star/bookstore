@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 import { ApiError } from './error';
 import { ValidationIssue } from '../../types';
 
@@ -7,7 +8,12 @@ export class ApiClient {
 
   constructor(config?: { baseUrl?: string; token?: string }) {
     this.baseUrl = config?.baseUrl ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
-    this.token = config?.token;
+
+    if (!config?.token && typeof window !== 'undefined') {
+      this.token = Cookies.get('token');
+    } else {
+      this.token = config?.token;
+    }
   }
 
   async request<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -17,7 +23,11 @@ export class ApiClient {
       ...options.headers
     };
 
-    const res = await fetch(`${this.baseUrl}${endpoint}`, { ...options, headers });
+    const res = await fetch(`${this.baseUrl}${endpoint}`, {
+      ...options,
+      headers,
+      credentials: 'include'
+    });
 
     if (!res.ok) {
       let message = `HTTP ${res.status}`;
