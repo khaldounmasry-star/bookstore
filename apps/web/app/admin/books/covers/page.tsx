@@ -1,14 +1,14 @@
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
-export default function AdminHome() {
+export default function AdminBookCoversPage() {
   return (
     <Box>
-      <Typography variant="h4" fontWeight={700} gutterBottom>
-        Admin Dashboard
+      <Typography variant="h5" fontWeight={600} gutterBottom>
+        Manage Book Covers
       </Typography>
       <Typography color="text.secondary">
-        Select a section from the sidebar to begin managing content.
+        Upload, update, or delete book cover images here.
       </Typography>
     </Box>
   );
