@@ -1,9 +1,16 @@
-'use client';
-
 import { Box } from '@mui/material';
 import { SignInForm } from '../../components/forms';
+import { redirect } from 'next/navigation';
+import { Role } from '../../types';
+import { getCurrentUser } from '../../lib';
 
-export default function SignInPage() {
+export default async function SignInPage() {
+  const user = await getCurrentUser();
+
+  if (user?.role) {
+    redirect(user.role === Role.USER ? '/' : '/admin');
+  }
+
   return (
     <Box
       sx={{

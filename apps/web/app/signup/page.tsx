@@ -1,9 +1,16 @@
-'use client';
-
 import { Box } from '@mui/material';
+import { redirect } from 'next/navigation';
 import { SignUpForm } from '../../components/forms';
+import { Role } from '../../types';
+import { getCurrentUser } from '../../lib';
 
-export default function SignUpPage() {
+export default async function SignUpPage() {
+  const user = await getCurrentUser();
+
+  if (user?.role) {
+    redirect(user.role === Role.USER ? '/' : '/admin');
+  }
+
   return (
     <Box
       sx={{

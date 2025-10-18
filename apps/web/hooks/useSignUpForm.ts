@@ -65,7 +65,8 @@ export const useSignUpForm = () => {
     try {
       setIsSubmitting(true);
       const { token: apiToken } = await usersApi.register({ firstName, lastName, email, password });
-      setCookie(apiToken);
+      setCookie('token', apiToken);
+      setCookie('role', 'USER');
       router.push('/');
     } catch (error) {
       if (error instanceof ApiError) {

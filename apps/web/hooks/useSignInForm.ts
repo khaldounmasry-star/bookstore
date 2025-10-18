@@ -47,7 +47,8 @@ export const useSignInForm = () => {
       setIsSubmitting(true);
       const { token: apiToken, role } = await usersApi.login({ email, password });
 
-      setCookie(apiToken);
+      setCookie('token', apiToken);
+      setCookie('role', role);
 
       const client = new ApiClient();
       client.setToken(apiToken);

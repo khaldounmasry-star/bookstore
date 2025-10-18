@@ -21,13 +21,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (storedToken) setToken(storedToken);
   }, []);
 
-  const login = (newToken: string) => {
-    setCookie(newToken);
+  const login = (newToken: string, role: string) => {
+    setCookie('token', newToken);
+    setCookie('role', role);
     setToken(newToken);
   };
 
   const logout = () => {
     Cookies.remove('token', { path: '/' });
+    Cookies.remove('role', { path: '/' });
     setToken(null);
   };
 

@@ -72,3 +72,8 @@ export interface ValidationIssue {
   path: string | string[];
   message: string;
 }
+
+export type CurrentUser = {
+  token: string;
+  role: Role;
+};
