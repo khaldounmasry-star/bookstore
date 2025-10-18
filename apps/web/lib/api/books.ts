@@ -1,4 +1,3 @@
-import { apiClient } from './client';
 import { Book, FilterResults } from '../../types';
 import { init } from './init';
 
