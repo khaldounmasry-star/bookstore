@@ -1,4 +1,5 @@
-import { ApiError, ValidationIssue } from './error';
+import { ApiError } from './error';
+import { ValidationIssue } from '../../types';
 
 export class ApiClient {
   private baseUrl: string;
