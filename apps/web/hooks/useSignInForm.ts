@@ -56,7 +56,6 @@ export const useSignInForm = () => {
 
       const client = new ApiClient();
       client.setToken(apiToken);
-      localStorage.setItem('user_status', apiToken);
 
       router.push(role === Role.USER ? '/' : '/admin');
     } catch (error) {

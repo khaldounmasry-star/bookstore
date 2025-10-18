@@ -2,15 +2,25 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import Cookies from 'js-cookie';
 import { AppBar, Box, Toolbar, IconButton, MenuItem, Menu } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import Logo from '../../public/logo.svg';
 import Image from 'next/image';
+import Logo from '../../public/logo.svg';
 import { SearchBar } from '../search-bar';
+import { useAuth } from '../../contexts/AuthContext';
 
 export const NavBar = () => {
+  const pathname = usePathname();
+  const { isAuthenticated, logout } = useAuth();
+  const [auth, setAuth] = React.useState(isAuthenticated);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  React.useEffect(() => {
+    const token = Cookies.get('token');
+    setAuth(Boolean(token));
+  }, [pathname, isAuthenticated]);
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -18,34 +28,9 @@ export const NavBar = () => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-
   const handleMenuClose = () => {
     setAnchorEl(null);
-    handleMobileMenuClose();
   };
-
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      id={menuId}
-      keepMounted
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>
-        <Link href="/signin" style={{ textDecoration: 'none', color: 'primary.main' }}>
-          Sign in
-        </Link>
-      </MenuItem>
-      {/* <MenuItem onClick={handleMenuClose}>My account</MenuItem> */}
-    </Menu>
-  );
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -63,7 +48,7 @@ export const NavBar = () => {
               size="large"
               edge="end"
               aria-label="account of current user"
-              aria-controls={menuId}
+              aria-controls="primary-search-account-menu"
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
               color="inherit"
@@ -73,7 +58,34 @@ export const NavBar = () => {
           </Box>
         </Toolbar>
       </AppBar>
-      {renderMenu}
+
+      <Menu
+        anchorEl={anchorEl}
+        id="primary-search-account-menu"
+        keepMounted
+        open={isMenuOpen}
+        onClose={handleMenuClose}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        {!auth ? (
+          <MenuItem onClick={handleMenuClose}>
+            <Link href="/signin" style={{ textDecoration: 'none', color: 'primary.main' }}>
+              Sign in
+            </Link>
+          </MenuItem>
+        ) : (
+          <MenuItem
+            onClick={() => {
+              logout();
+              setAuth(false);
+              handleMenuClose();
+            }}
+          >
+            Sign out
+          </MenuItem>
+        )}
+      </Menu>
     </Box>
   );
 };

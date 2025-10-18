@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../theme';
+import { AuthProvider } from '../contexts/AuthContext';
 import { NavBar } from '../components/nav-bar';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
@@ -22,16 +23,18 @@ export default function RootLayout({
         <AppRouterCacheProvider options={{ key: 'css' }}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <NavBar />
-            <Container
-              maxWidth="xl"
-              sx={{
-                mt: 4,
-                mb: 4
-              }}
-            >
-              {children}
-            </Container>
+            <AuthProvider>
+              <NavBar />
+              <Container
+                maxWidth="xl"
+                sx={{
+                  mt: 4,
+                  mb: 4
+                }}
+              >
+                {children}
+              </Container>
+            </AuthProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
