@@ -38,7 +38,14 @@ export const NavBar = () => {
         <Toolbar>
           <Box sx={{ display: 'flex', mr: 2 }}>
             <Link href="/" style={{ display: 'inline-flex', alignItems: 'center' }}>
-              <Image src={Logo} alt="Logo" width={120} height={40} priority />
+              <Image
+                src={Logo}
+                alt="Logo"
+                width={120}
+                height={40}
+                priority
+                hidden={/admin/i.test(pathname)}
+              />
             </Link>
           </Box>
           <Box sx={{ flexGrow: 1 }} />
@@ -75,15 +82,23 @@ export const NavBar = () => {
             </Link>
           </MenuItem>
         ) : (
-          <MenuItem
-            onClick={() => {
-              logout();
-              setAuth(false);
-              handleMenuClose();
-            }}
-          >
-            Sign out
-          </MenuItem>
+          [
+            <MenuItem onClick={handleMenuClose} key="admin-link">
+              <Link href="/admin" style={{ textDecoration: 'none', color: 'primary.main' }}>
+                Admin
+              </Link>
+            </MenuItem>,
+            <MenuItem
+              onClick={() => {
+                logout();
+                setAuth(false);
+                handleMenuClose();
+              }}
+              key="sign-out-link"
+            >
+              Sign out
+            </MenuItem>
+          ]
         )}
       </Menu>
     </Box>

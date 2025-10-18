@@ -77,3 +77,19 @@ export type CurrentUser = {
   token: string;
   role: Role;
 };
+
+export interface AuthContextType {
+  isAuthenticated: boolean;
+  token?: string | null;
+  login: (token: string, role: string) => void;
+  logout: () => void;
+}
+
+export interface SideBarProps {
+  role: 'ADMIN' | 'SUPER_ADMIN';
+};
+
+export type SideBarToggleProps = {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
