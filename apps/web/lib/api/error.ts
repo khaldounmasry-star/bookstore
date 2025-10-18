@@ -1,7 +1,4 @@
-export interface ValidationIssue {
-  path: string | string[];
-  message: string;
-}
+import { ValidationIssue } from '../../types';
 
 export class ApiError extends Error {
   status: number;

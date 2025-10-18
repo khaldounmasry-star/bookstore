@@ -62,3 +62,8 @@ export type LoginResponse = {
   token: string;
   role: Role;
 };
+
+export interface ValidationIssue {
+  path: string | string[];
+  message: string;
+}
