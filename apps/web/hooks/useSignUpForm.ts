@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
-import { usersApi, ApiError } from '../lib/api';
+import { setCookie, usersApi, ApiError } from '../lib';
 
 export const useSignUpForm = () => {
   const [email, setEmail] = useState('');
@@ -66,11 +65,7 @@ export const useSignUpForm = () => {
     try {
       setIsSubmitting(true);
       const { token: apiToken } = await usersApi.register({ firstName, lastName, email, password });
-      Cookies.set('token', apiToken, {
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/'
-      });
+      setCookie(apiToken);
       router.push('/');
     } catch (error) {
       if (error instanceof ApiError) {

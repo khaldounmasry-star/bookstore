@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
+import { setCookie } from '../lib';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -21,11 +22,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const login = (newToken: string) => {
-    Cookies.set('token', newToken, {
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/'
-    });
+    setCookie(newToken);
     setToken(newToken);
   };
 

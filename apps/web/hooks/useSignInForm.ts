@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
-import { usersApi, ApiError, ApiClient } from '../lib/api';
+import { usersApi, ApiError, ApiClient, setCookie } from '../lib';
 import { Role } from '../types';
 
 export const useSignInForm = () => {
@@ -48,11 +47,7 @@ export const useSignInForm = () => {
       setIsSubmitting(true);
       const { token: apiToken, role } = await usersApi.login({ email, password });
 
-      Cookies.set('token', apiToken, {
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/'
-      });
+      setCookie(apiToken);
 
       const client = new ApiClient();
       client.setToken(apiToken);
