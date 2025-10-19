@@ -1,5 +1,11 @@
 import { apiClient } from './client';
-import { LoginResponse, SignUpResponse, User } from '../../types';
+import {
+  CreateAdminResponse,
+  LoginResponse,
+  NewUserPayload,
+  SignUpResponse,
+  User
+} from '../../types';
 import { init } from './init';
 
 export const usersApi = {
@@ -20,8 +26,13 @@ export const usersApi = {
     return client.request<User[]>(`/users`);
   },
 
-  createAdmin: (data: Record<string, unknown>) =>
-    apiClient.request(`/users/create-admin`, { method: 'POST', body: JSON.stringify(data) }),
+  createAdmin: async (data: NewUserPayload) => {
+    const client = await init();
+    return client.request<CreateAdminResponse>(`/users/create-admin`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  },
 
   deleteUser: (id: number) => apiClient.request(`/users/${id}`, { method: 'DELETE' })
 };

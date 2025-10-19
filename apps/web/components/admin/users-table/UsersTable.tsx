@@ -22,7 +22,7 @@ const handleEdit = (user: User) => user;
 
 export const UsersTable: FC<UsersTableProps> = ({ users }) => {
   return (
-    <Box sx={{ marginTop: 2 }}>
+    <Box sx={{ marginTop: 3 }}>
       <TableContainer component={Paper} sx={{ borderRadius: 3, overflow: 'hidden' }}>
         <Table aria-label="users table">
           <TableHead sx={{ bgcolor: 'grey.100' }}>

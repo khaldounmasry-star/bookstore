@@ -105,3 +105,10 @@ export type User = {
 export type UsersTableProps = {
   users: User[];
 };
+
+export type NewUserPayload = Omit<User, 'id' | 'role'> & { password: string };
+
+export type CreateAdminResponse = {
+  message: string;
+  admin: User;
+};
