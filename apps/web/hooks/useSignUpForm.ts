@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { setCookie, usersApi, ApiError } from '../lib';
+import { setCookie, usersApi, ApiError, validateUser } from '../lib';
 
 export const useSignUpForm = () => {
   const [email, setEmail] = useState('');
@@ -26,37 +26,27 @@ export const useSignUpForm = () => {
   };
 
   const validateFields = (): boolean => {
-    let hasError = false;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const validation = validateUser({ firstName, lastName, email, password });
     resetErrors();
 
-    if (!firstName.trim()) {
-      setFirstNameError('First name is required');
-      hasError = true;
-    }
+    Object.entries(validation).forEach(([field, message]) => {
+      switch (field) {
+        case 'firstName':
+          setFirstNameError(message!);
+          break;
+        case 'lastName':
+          setLastNameError(message!);
+          break;
+        case 'email':
+          setEmailError(message!);
+          break;
+        case 'password':
+          setPasswordError(message!);
+          break;
+      }
+    });
 
-    if (!lastName.trim()) {
-      setLastNameError('Last name is required');
-      hasError = true;
-    }
-
-    if (!email.trim()) {
-      setEmailError('Email is required');
-      hasError = true;
-    } else if (!emailRegex.test(email)) {
-      setEmailError('Invalid email format');
-      hasError = true;
-    }
-
-    if (!password.trim()) {
-      setPasswordError('Password is required');
-      hasError = true;
-    } else if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
-      hasError = true;
-    }
-
-    return !hasError;
+    return Object.keys(validation).length === 0;
   };
 
   const handleSubmit = async (): Promise<void> => {

@@ -81,6 +81,7 @@ export type CurrentUser = {
 export interface AuthContextType {
   isAuthenticated: boolean;
   token?: string | null;
+  role?: string | null;
   login: (token: string, role: string) => void;
   logout: () => void;
 }
@@ -114,8 +115,8 @@ export type CreateAdminResponse = {
 };
 
 export type UserFormValues = {
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   password: string;
 };

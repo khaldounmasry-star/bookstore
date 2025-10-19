@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Cookies from 'js-cookie';
@@ -10,17 +10,21 @@ import Image from 'next/image';
 import Logo from '../../public/logo.svg';
 import { SearchBar } from '../search-bar';
 import { useAuth } from '../../contexts/AuthContext';
+import { Role } from '../../types';
 
 export const NavBar = () => {
   const pathname = usePathname();
-  const { isAuthenticated, logout } = useAuth();
-  const [auth, setAuth] = React.useState(isAuthenticated);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { role, isAuthenticated, logout } = useAuth();
+  const [auth, setAuth] = useState(isAuthenticated);
+  const [userRole, setUserRole] = useState(role);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const token = Cookies.get('token');
+    const role = Cookies.get('role');
     setAuth(Boolean(token));
-  }, [pathname, isAuthenticated]);
+    setUserRole(role);
+  }, [pathname, isAuthenticated, role]);
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -77,21 +81,24 @@ export const NavBar = () => {
       >
         {!auth ? (
           <MenuItem onClick={handleMenuClose}>
-            <Link href="/signin" style={{ textDecoration: 'none', color: 'primary.main' }}>
+            <Link href="/signin" style={{ textDecoration: 'none', color: 'inherit' }}>
               Sign in
             </Link>
           </MenuItem>
         ) : (
           [
-            <MenuItem onClick={handleMenuClose} key="admin-link">
-              <Link href="/admin" style={{ textDecoration: 'none', color: 'primary.main' }}>
-                Admin
-              </Link>
-            </MenuItem>,
+            userRole && userRole !== Role.USER && (
+              <MenuItem onClick={handleMenuClose} key="admin-link">
+                <Link href="/admin" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  Admin
+                </Link>
+              </MenuItem>
+            ),
             <MenuItem
               onClick={() => {
                 logout();
                 setAuth(false);
+                setUserRole(null);
                 handleMenuClose();
               }}
               key="sign-out-link"

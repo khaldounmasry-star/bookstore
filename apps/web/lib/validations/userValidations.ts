@@ -4,11 +4,11 @@ export const validateUser = (values: UserFormValues): UserFormErrors => {
   const errors: UserFormErrors = {};
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!values.firstName.trim()) {
+  if (!values.firstName?.trim()) {
     errors.firstName = 'First name is required';
   }
 
-  if (!values.lastName.trim()) {
+  if (!values.lastName?.trim()) {
     errors.lastName = 'Last name is required';
   }
 
