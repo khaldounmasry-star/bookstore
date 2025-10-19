@@ -42,6 +42,14 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
     setLoading(true);
     try {
       await usersApi.deleteUser(Number(selectedUser.id));
+      /*
+        Added a short delay to handle SSR caching and client–server synchronization.
+        The parent (SSR) was re-fetching users right after deletion, but the response still contained
+        the deleted user because the server was serving a cached fetch result.
+        This timeout gives the backend enough time to invalidate the cache and ensure the refreshed data
+        reflects the deletion correctly.
+        TODO: refactor
+      */
       setTimeout(() => {
         setSuccess(true);
         router.refresh();
