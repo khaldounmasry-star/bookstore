@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { usersApi, ApiError, ApiClient, setCookie } from '../lib';
+import { usersApi, ApiError, ApiClient, setCookie, validateUser } from '../lib';
 import { Role } from '../types';
 
 export const useSignInForm = () => {
@@ -20,24 +20,21 @@ export const useSignInForm = () => {
   };
 
   const validateFields = (): boolean => {
+    const validation = validateUser({ email, password, signIn: true });
     resetErrors();
-    let hasError = false;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!email.trim()) {
-      setEmailError('Email is required');
-      hasError = true;
-    } else if (!emailRegex.test(email)) {
-      setEmailError('Invalid email format');
-      hasError = true;
-    }
+    Object.entries(validation).forEach(([field, message]) => {
+      switch (field) {
+        case 'email':
+          setEmailError(message!);
+          break;
+        case 'password':
+          setPasswordError(message!);
+          break;
+      }
+    });
 
-    if (!password.trim()) {
-      setPasswordError('Password is required');
-      hasError = true;
-    }
-
-    return !hasError;
+    return Object.keys(validation).length === 0;
   };
 
   const handleSubmit = async (): Promise<void> => {

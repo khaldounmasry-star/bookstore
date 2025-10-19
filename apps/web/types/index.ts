@@ -115,6 +115,7 @@ export type CreateAdminResponse = {
 };
 
 export type UserFormValues = {
+  signIn?: boolean;
   firstName?: string;
   lastName?: string;
   email: string;
