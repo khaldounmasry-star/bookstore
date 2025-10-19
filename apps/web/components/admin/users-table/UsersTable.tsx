@@ -13,6 +13,8 @@ import {
   Tooltip
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DoDisturbIcon from '@mui/icons-material/DoDisturb';
+import EditIcon from '@mui/icons-material/Edit';
 import { FC, useState } from 'react';
 import { UsersTableProps, Role, User } from '../../../types';
 import { usersApi } from '../../../lib';
@@ -29,6 +31,11 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
   const [loading, setLoading] = useState(false);
 
   const openConfirmDialog = (user: User) => {
+    setSelectedUser(user);
+    setConfirmOpen(true);
+  };
+
+  const openEditDialog = (user: User) => {
     setSelectedUser(user);
     setConfirmOpen(true);
   };
@@ -53,7 +60,7 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
       setTimeout(() => {
         setSuccess(true);
         router.refresh();
-      }, 200);
+      }, 400);
     } catch (err) {
       console.error('Delete error:', err);
     } finally {
@@ -77,7 +84,6 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
               </TableCell>
             </TableRow>
           </TableHead>
-
           <TableBody>
             {users.length === 0 ? (
               <TableRow>
@@ -99,19 +105,36 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
                   <TableCell>{user.lastName}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.role}</TableCell>
-                  {user.role !== Role.SUPER_ADMIN && (
-                    <TableCell align="center">
-                      <Tooltip title={`Delete ${user.firstName}`}>
-                        <IconButton
-                          color="error"
-                          size="medium"
-                          onClick={() => openConfirmDialog(user)}
-                        >
-                          <DeleteIcon fontSize="medium" />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  )}
+                  <TableCell align="center">
+                    {user.role !== Role.SUPER_ADMIN ? (
+                      <>
+                        <Tooltip title={`Edit ${user.firstName}`}>
+                          <IconButton
+                            color="info"
+                            size="medium"
+                            onClick={() => openEditDialog(user)}
+                          >
+                            <EditIcon fontSize="medium" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title={`Delete ${user.firstName}`}>
+                          <IconButton
+                            color="error"
+                            size="medium"
+                            onClick={() => openConfirmDialog(user)}
+                          >
+                            <DeleteIcon fontSize="medium" />
+                          </IconButton>
+                        </Tooltip>
+                      </>
+                    ) : (
+                      <Box sx={{ color: 'text.disabled', fontStyle: 'italic' }}>
+                        <Tooltip title="Action not allowed">
+                          <DoDisturbIcon fontSize="medium" />
+                        </Tooltip>
+                      </Box>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))
             )}

@@ -1,9 +1,11 @@
 import { apiClient } from './client';
 import {
   CreateAdminResponse,
+  ExistingUserPayload,
   LoginResponse,
   NewUserPayload,
   SignUpResponse,
+  UpdateUserResponse,
   User
 } from '../../types';
 import { init } from './init';
@@ -31,6 +33,14 @@ export const usersApi = {
     return client.request<CreateAdminResponse>(`/users/create-admin`, {
       method: 'POST',
       body: JSON.stringify(data)
+    });
+  },
+
+  updateUser: async (user: ExistingUserPayload) => {
+    const client = await init();
+    return client.request<UpdateUserResponse>(`/users/${user.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(user)
     });
   },
 

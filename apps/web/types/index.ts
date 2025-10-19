@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export interface Cover {
   imageUrl: string;
 }
@@ -109,9 +111,16 @@ export type UsersTableProps = {
 
 export type NewUserPayload = Omit<User, 'id' | 'role'> & { password: string };
 
+export type ExistingUserPayload = Partial<User>;
+
 export type CreateAdminResponse = {
   message: string;
   admin: User;
+};
+
+export type UpdateUserResponse = {
+  message: string;
+  user: User;
 };
 
 export type UserFormValues = {
@@ -163,8 +172,6 @@ export type NotificationProps = {
 };
 
 export type PageProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: Promise<any> | undefined;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   searchParams: Promise<any> | undefined;
 };
