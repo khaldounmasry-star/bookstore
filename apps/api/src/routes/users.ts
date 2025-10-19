@@ -4,7 +4,7 @@ import { Hono } from 'hono';
 import { prisma } from '@utils/prisma';
 import { signToken } from '@utils/jwt';
 import { logger } from '@utils/logger';
-import { createPersonSchema, getPersonSchema } from '@schemas/personSchema';
+import { createPersonSchema, getPersonSchema, updatePersonSchema } from '@schemas/personSchema';
 import { validateMiddleware } from '@middleware/validate';
 import { authMiddleware, requireRole } from '@middleware/auth';
 import { Role } from '@prisma/client';
@@ -118,6 +118,50 @@ users.post(
     logger.info(`New admin created: ${email}`);
 
     return c.json({ message: 'Admin created', admin });
+  }
+);
+
+users.put(
+  '/:id',
+  requireRole(Role.SUPER_ADMIN),
+  validateMiddleware(updatePersonSchema),
+  async (c) => {
+    const body = c.get('validated') as z.infer<typeof updatePersonSchema>;
+    const id = Number(c.req.param('id'));
+
+    try {
+      const existing = await prisma.person.findUnique({ where: { id } });
+      if (!existing) {
+        logger.error(`Update failed: user with id ${id} not found`);
+        return c.json({ error: 'User not found' }, 404);
+      }
+
+      if (body.email && body.email !== existing.email) {
+        const emailInUse = await prisma.person.findUnique({
+          where: { email: body.email }
+        });
+        if (emailInUse) {
+          logger.error(`Update failed: email ${body.email} already in use`);
+          return c.json({ error: 'Email already in use' }, 409);
+        }
+      }
+
+      const updated = await prisma.person.update({
+        where: { id },
+        data: {
+          firstName: body.firstName ?? existing.firstName,
+          lastName: body.lastName ?? existing.lastName,
+          email: body.email ?? existing.email,
+          role: body.role ?? existing.role
+        }
+      });
+
+      logger.info(`User ${id} updated successfully`);
+      return c.json({ message: 'User updated successfully', user: updated });
+    } catch (error) {
+      logger.error('Error updating user', error);
+      return c.json({ error: 'Failed to update user' }, 500);
+    }
   }
 );
 

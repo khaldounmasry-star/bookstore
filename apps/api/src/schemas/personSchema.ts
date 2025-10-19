@@ -34,3 +34,8 @@ export const updatePersonSchema = createPersonSchema
   .extend({
     id: z.number().positive().optional()
   });
+
+export const updatePasswordSchema = z.object({
+  id: z.number().positive(),
+  password: z.string().min(6, 'Password must be at least 6 characters long'),
+});

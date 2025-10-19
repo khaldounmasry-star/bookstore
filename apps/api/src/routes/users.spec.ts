@@ -10,7 +10,8 @@ jest.mock('@utils/prisma', () => ({
       findUnique: jest.fn(),
       findMany: jest.fn(),
       create: jest.fn(),
-      delete: jest.fn()
+      delete: jest.fn(),
+      update: jest.fn()
     },
     password: {
       findFirst: jest.fn()
@@ -226,6 +227,145 @@ describe('users routes', () => {
     });
   });
 
+  describe('PUT /users/:id', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('updates a user successfully', async () => {
+      (prisma.person.findUnique as jest.Mock)
+        .mockResolvedValueOnce({
+          id: 66,
+          firstName: 'Old',
+          lastName: 'Name',
+          email: 'old@mail.com',
+          role: 'USER',
+        })
+        .mockResolvedValueOnce(null);
+
+      (prisma.person.update as jest.Mock).mockResolvedValue({
+        id: 66,
+        firstName: 'Nancy',
+        lastName: 'Smith',
+        email: 'nancys@mail.com',
+        role: 'USER',
+      });
+
+      const res = await app.request('/users/66', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: 'Nancy',
+          lastName: 'Smith',
+          email: 'nancys@mail.com',
+        }),
+      });
+
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.message).toBe('User updated successfully');
+      expect(data.user).toMatchObject({
+        id: 66,
+        firstName: 'Nancy',
+        lastName: 'Smith',
+        email: 'nancys@mail.com',
+      });
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining('User 66 updated successfully')
+      );
+    });
+
+    it('updates a user successfully', async () => {
+      (prisma.person.findUnique as jest.Mock).mockResolvedValue({
+        id: 66,
+        firstName: 'Old',
+        lastName: 'Name',
+        email: 'old@mail.com',
+        role: 'USER',
+      });
+
+      (prisma.person.update as jest.Mock).mockResolvedValue({
+        id: 66,
+        firstName: 'Nancy',
+        lastName: 'Smith',
+        email: 'nancys@mail.com',
+        role: 'USER',
+      });
+
+      const res = await app.request('/users/66', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: 'Nancy',
+          lastName: 'Smith',
+          email: 'nancys@mail.com',
+        }),
+      });
+
+      await res.json();
+
+      expect(res.status).toBe(409);
+    });
+
+
+    it('returns 404 when user not found', async () => {
+      (prisma.person.findUnique as jest.Mock).mockResolvedValue(null);
+
+      const res = await app.request('/users/123', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: 'Test',
+          lastName: 'User',
+          email: 'test@mail.com',
+        }),
+      });
+
+      const data = await res.json();
+
+      expect(res.status).toBe(404);
+      expect(data.error).toContain('User not found');
+      expect(logger.error).toHaveBeenCalledWith(
+        expect.stringContaining('Update failed: user with id 123 not found')
+      );
+    });
+
+    it('returns 400 for invalid input', async () => {
+      const res = await app.request('/users/66', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: 'not-an-email',
+        }),
+      });
+
+      const data = await res.json();
+      expect(res.status).toBe(400);
+      expect(data.error).toBeDefined();
+    });
+
+    it('handles unexpected errors gracefully', async () => {
+      (prisma.person.findUnique as jest.Mock).mockResolvedValue({
+        id: 99,
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@mail.com',
+        role: 'USER',
+      });
+      (prisma.person.update as jest.Mock).mockRejectedValue(new Error('DB error'));
+
+      const res = await app.request('/users/99', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ firstName: 'Broken' }),
+      });
+
+      const data = await res.json();
+      expect(res.status).toBe(500);
+      expect(data.error).toContain('Failed to update user');
+    });
+  });
 
   describe('DELETE /users/:id', () => {
     it('deletes a user successfully', async () => {

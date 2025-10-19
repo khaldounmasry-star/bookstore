@@ -65,6 +65,35 @@ docs.get('/swagger.json', (c) =>
             createdAt: { type: 'string', format: 'date-time' }
           }
         },
+        UpdateUserInput: {
+          type: 'object',
+          description: 'Fields for updating an existing user. All properties are optional.',
+          properties: {
+            id: {
+              type: 'integer',
+              description: 'User ID (optional, may be inferred from path parameter).'
+            },
+            firstName: {
+              type: 'string',
+              description: 'Updated first name of the user.'
+            },
+            lastName: {
+              type: 'string',
+              description: 'Updated last name of the user.'
+            },
+            email: {
+              type: 'string',
+              format: 'email',
+              description: 'Updated email address of the user.'
+            },
+            role: {
+              type: 'string',
+              enum: ['USER', 'ADMIN', 'SUPER_ADMIN'],
+              description: 'User role. Only SUPER_ADMIN can assign roles.'
+            }
+          },
+          additionalProperties: false
+        },
         RegisterInput: {
           type: 'object',
           required: ['firstName', 'lastName', 'email', 'password'],
@@ -487,6 +516,50 @@ docs.get('/swagger.json', (c) =>
             204: { description: 'User deleted successfully' },
             401: { description: 'Unauthorized' },
             403: { description: 'Forbidden: Higher user role required' },
+            404: { description: 'User not found' }
+          }
+        },
+        put: {
+          tags: ['Users'],
+          summary: 'Update an existing user',
+          description:
+            'Allows updating user profile information. Requires SUPER_ADMIN privileges.',
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            {
+              name: 'id',
+              in: 'path',
+              required: true,
+              schema: { type: 'integer' },
+              description: 'The ID of the user to update.'
+            }
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/UpdateUserInput' },
+                example: {
+                  firstName: 'Alex',
+                  lastName: 'Smith',
+                  email: 'alex.smith@example.com',
+                  role: 'ADMIN'
+                }
+              }
+            }
+          },
+          responses: {
+            200: {
+              description: 'User updated successfully',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/User' }
+                }
+              }
+            },
+            400: { description: 'Validation error' },
+            401: { description: 'Unauthorized' },
+            403: { description: 'Forbidden' },
             404: { description: 'User not found' }
           }
         }
