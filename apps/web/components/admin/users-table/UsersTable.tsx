@@ -42,8 +42,10 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
     setLoading(true);
     try {
       await usersApi.deleteUser(Number(selectedUser.id));
-      setSuccess(true);
-      router.refresh();
+      setTimeout(() => {
+        setSuccess(true);
+        router.refresh();
+      }, 200);
     } catch (err) {
       console.error('Delete error:', err);
     } finally {
