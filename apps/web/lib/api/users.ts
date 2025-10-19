@@ -34,5 +34,8 @@ export const usersApi = {
     });
   },
 
-  deleteUser: (id: number) => apiClient.request(`/users/${id}`, { method: 'DELETE' })
+  deleteUser: async (id: number) => {
+    const client = await init();
+    client.request(`/users/${id}`, { method: 'DELETE' });
+  }
 };

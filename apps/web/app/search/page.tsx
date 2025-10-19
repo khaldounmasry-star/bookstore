@@ -3,9 +3,9 @@ import { PaginationControls } from '../../components/pagination-controls';
 import { SearchTitle } from '../../components/search-title';
 import { SearchCard } from '../../components/search-card';
 import { booksApi } from '../../lib/api';
-import { SearchProps } from '../../types';
+import { PageProps } from '../../types';
 
-const SearchPage = async ({ searchParams }: SearchProps) => {
+const SearchPage = async ({ searchParams }: PageProps) => {
   const { q, limit, offset } = await searchParams;
   const query = q ?? '';
   const limitation = Number(limit ?? 5);

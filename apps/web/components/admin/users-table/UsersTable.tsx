@@ -12,15 +12,46 @@ import {
   IconButton,
   Tooltip
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { FC } from 'react';
-import { UsersTableProps, User, Role } from '../../../types';
-
-const handleDelete = (user: User) => user;
-const handleEdit = (user: User) => user;
+import { FC, useState } from 'react';
+import { UsersTableProps, Role, User } from '../../../types';
+import { usersApi } from '../../../lib';
+import { useRouter } from 'next/navigation';
+import { ConfirmationModal } from '../confirmation-modal';
+import { ActionNotification } from '../action-notification';
 
 export const UsersTable: FC<UsersTableProps> = ({ users }) => {
+  const router = useRouter();
+
+  const [success, setSuccess] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const openConfirmDialog = (user: User) => {
+    setSelectedUser(user);
+    setConfirmOpen(true);
+  };
+
+  const closeConfirmDialog = () => {
+    setConfirmOpen(false);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedUser) return;
+    setLoading(true);
+    try {
+      await usersApi.deleteUser(Number(selectedUser.id));
+      setSuccess(true);
+      router.refresh();
+    } catch (err) {
+      console.error('Delete error:', err);
+    } finally {
+      setLoading(false);
+      closeConfirmDialog();
+    }
+  };
+
   return (
     <Box sx={{ marginTop: 3 }}>
       <TableContainer component={Paper} sx={{ borderRadius: 3, overflow: 'hidden' }}>
@@ -57,18 +88,15 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
                   <TableCell>{user.firstName}</TableCell>
                   <TableCell>{user.lastName}</TableCell>
                   <TableCell>{user.email}</TableCell>
-                  <TableCell colSpan={user.role === Role.SUPER_ADMIN ? 2 : 1}>
-                    {user.role}
-                  </TableCell>
+                  <TableCell>{user.role}</TableCell>
                   {user.role !== Role.SUPER_ADMIN && (
                     <TableCell align="center">
-                      <Tooltip title={`Edit ${user.firstName}`}>
-                        <IconButton color="primary" size="medium" onClick={() => handleEdit(user)}>
-                          <EditIcon fontSize="medium" />
-                        </IconButton>
-                      </Tooltip>
                       <Tooltip title={`Delete ${user.firstName}`}>
-                        <IconButton color="error" size="medium" onClick={() => handleDelete(user)}>
+                        <IconButton
+                          color="error"
+                          size="medium"
+                          onClick={() => openConfirmDialog(user)}
+                        >
                           <DeleteIcon fontSize="medium" />
                         </IconButton>
                       </Tooltip>
@@ -80,6 +108,31 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
           </TableBody>
         </Table>
       </TableContainer>
+      <ConfirmationModal
+        open={confirmOpen}
+        title="Confirm Deletion"
+        message={
+          <>
+            Are you sure you want to delete user:{' '}
+            <b>
+              {selectedUser?.firstName} {selectedUser?.lastName}
+            </b>
+            ?
+          </>
+        }
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        loading={loading}
+        onConfirm={handleConfirmDelete}
+        onClose={closeConfirmDialog}
+      />
+      {success && (
+        <ActionNotification
+          success={success}
+          callbacks={[() => setSuccess(false), () => setSelectedUser(null)]}
+          successMessage={`User ${selectedUser?.firstName} deleted successfully!`}
+        />
+      )}
     </Box>
   );
 };

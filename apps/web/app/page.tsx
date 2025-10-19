@@ -4,20 +4,11 @@ import { SearchFilter } from '../components/search-filter';
 import { Stack, Typography } from '@mui/material';
 import { Loading } from '../components/loading';
 import { booksApi } from '../lib/api';
+import { PageProps } from '../types';
 
 export const revalidate = 60;
 
-interface HomeProps {
-  searchParams?: {
-    genre?: string;
-    sort?: string;
-    order?: string;
-    limit?: string;
-    offset?: string;
-  };
-}
-
-export default async function Home({ searchParams }: HomeProps) {
+export default async function Home({ searchParams }: PageProps) {
   const {
     genre = '',
     sort = 'rating',

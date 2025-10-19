@@ -2,8 +2,9 @@ import { notFound } from 'next/dist/client/components/navigation';
 import { BookDetails } from '../../../components/book-details';
 import { booksApi } from '../../../lib/api';
 import { ApiError } from '../../../lib/api/error';
+import { PageProps } from '../../../types';
 
-export default async function BookPage({ params }: { params: { id: string } }) {
+export default async function BookPage({ params }: PageProps) {
   const { id } = await params;
 
   try {

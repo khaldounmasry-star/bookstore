@@ -137,7 +137,34 @@ export type AlertState = {
 
 export type AddUserModalProps = {
   open: boolean;
-  setAlert: React.Dispatch<React.SetStateAction<AlertState | null>>;
+  setAlert: React.Dispatch<React.SetStateAction<AlertState | undefined>>;
   onClose: () => void;
   onSubmit: (data: NewUserPayload) => Promise<void> | void;
+};
+
+export type ConfirmationModalProps = {
+  open: boolean;
+  title?: string;
+  message: string | React.ReactNode;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  loading?: boolean;
+  onConfirm: () => void | Promise<void>;
+  onClose: () => void;
+};
+
+type Callback = () => void;
+
+export type NotificationProps = {
+  callbacks: Callback[];
+  success: boolean;
+  successMessage: string;
+  alert?: AlertState;
+};
+
+export type PageProps = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params: Promise<any> | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  searchParams: Promise<any> | undefined;
 };

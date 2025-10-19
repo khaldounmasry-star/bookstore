@@ -10,11 +10,11 @@ import {
   Stack
 } from '@mui/material';
 import { useState, FC } from 'react';
-import { UserFormValues, UserFormErrors, AddUserModalProps } from '../../../types';
+import { UserFormErrors, AddUserModalProps, NewUserPayload } from '../../../types';
 import { validateUser, handleUserApiError } from '../../../lib';
 
 export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit, setAlert }) => {
-  const [form, setForm] = useState<UserFormValues>({
+  const [form, setForm] = useState<NewUserPayload>({
     firstName: '',
     lastName: '',
     email: '',

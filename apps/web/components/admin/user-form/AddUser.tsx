@@ -2,19 +2,18 @@
 
 import { FC, useState } from 'react';
 import { Button, Stack, Snackbar, Alert } from '@mui/material';
-import { NewUserPayload } from '../../../types';
+import { AlertState, NewUserPayload } from '../../../types';
 import { AddUserModal } from './AddUserModal';
 import { usersApi } from '../../../lib';
 import { useRouter } from 'next/navigation';
+import { ActionNotification } from '../action-notification';
 
 export const AddUser: FC = () => {
   const router = useRouter();
   const [openDialog, setOpenDialog] = useState(false);
   const [success, setSuccess] = useState(false);
   const [user, setUser] = useState('');
-  const [alert, setAlert] = useState<{ message: string; severity: 'error' | 'success' } | null>(
-    null
-  );
+  const [alert, setAlert] = useState<AlertState | undefined>(undefined);
 
   const handleAddUser = async (data: NewUserPayload) => {
     const { admin } = await usersApi.createAdmin(data);
@@ -45,22 +44,12 @@ export const AddUser: FC = () => {
       </Snackbar>
 
       {(success || alert) && (
-        <Snackbar
-          open
-          autoHideDuration={3000}
-          onClose={() => {
-            setSuccess(false);
-            setAlert(null);
-          }}
-        >
-          <Alert
-            severity={success ? 'success' : (alert?.severity ?? 'info')}
-            variant="filled"
-            sx={{ mb: 2 }}
-          >
-            {success ? `Admin ${user} added successfully!` : (alert?.message ?? '')}
-          </Alert>
-        </Snackbar>
+        <ActionNotification
+          success={success}
+          callbacks={[() => setSuccess(false), () => setAlert(undefined)]}
+          successMessage={`Admin ${user} added successfully!`}
+          alert={alert}
+        />
       )}
     </>
   );
