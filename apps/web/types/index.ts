@@ -139,5 +139,5 @@ export type AddUserModalProps = {
   open: boolean;
   setAlert: React.Dispatch<React.SetStateAction<AlertState | null>>;
   onClose: () => void;
-  onSubmit: (data: UserFormValues & { password: string }) => Promise<void> | void;
+  onSubmit: (data: NewUserPayload) => Promise<void> | void;
 };
