@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { usersApi, ApiError, ApiClient, setCookie, validateUser } from '../lib';
+import { usersApi, ApiClient, setCookie, validateUser, handleUserApiError } from '../lib';
 import { Role } from '../types';
 
 export const useSignInForm = () => {
@@ -52,27 +52,10 @@ export const useSignInForm = () => {
 
       router.push(role === Role.USER ? '/' : '/admin');
     } catch (error) {
-      if (error instanceof ApiError) {
-        if (error.isValidationError()) {
-          error.issues?.forEach(issue => {
-            if (issue.path === 'email') setEmailError(issue.message);
-            if (issue.path === 'password') setPasswordError(issue.message);
-          });
-          return;
-        }
-
-        if (error.status === 401) {
-          if (error.message.includes('email')) {
-            setEmailError('Invalid email');
-          } else {
-            setPasswordError('Invalid password');
-          }
-          return;
-        }
-      }
-
-      console.error('Unexpected login error:', error);
-      alert('Unexpected error occurred. Please try again.');
+      handleUserApiError(error, (field, message) => {
+        if (field === 'email') setEmailError(message);
+        if (field === 'password') setPasswordError(message);
+      });
     } finally {
       setIsSubmitting(false);
     }
