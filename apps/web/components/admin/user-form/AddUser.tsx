@@ -12,16 +12,15 @@ export const AddUser: FC = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [success, setSuccess] = useState(false);
   const [user, setUser] = useState('');
+  const [alert, setAlert] = useState<{ message: string; severity: 'error' | 'success' } | null>(
+    null
+  );
 
   const handleAddUser = async (data: NewUserPayload) => {
-    try {
-      const { admin } = await usersApi.createAdmin(data);
-      setUser(admin.firstName);
-      setSuccess(true);
-      router.refresh();
-    } catch (err) {
-      console.error(err);
-    }
+    const { admin } = await usersApi.createAdmin(data);
+    setUser(admin.firstName);
+    setSuccess(true);
+    router.refresh();
   };
 
   return (
@@ -36,6 +35,7 @@ export const AddUser: FC = () => {
         open={openDialog}
         onClose={() => setOpenDialog(false)}
         onSubmit={handleAddUser}
+        setAlert={setAlert}
       />
 
       <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
@@ -43,6 +43,25 @@ export const AddUser: FC = () => {
           Admin {user} added successfully!
         </Alert>
       </Snackbar>
+
+      {(success || alert) && (
+        <Snackbar
+          open
+          autoHideDuration={3000}
+          onClose={() => {
+            setSuccess(false);
+            setAlert(null);
+          }}
+        >
+          <Alert
+            severity={success ? 'success' : (alert?.severity ?? 'info')}
+            variant="filled"
+            sx={{ mb: 2 }}
+          >
+            {success ? `Admin ${user} added successfully!` : (alert?.message ?? '')}
+          </Alert>
+        </Snackbar>
+      )}
     </>
   );
 };

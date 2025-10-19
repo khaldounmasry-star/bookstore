@@ -220,7 +220,7 @@ describe('users routes', () => {
       });
       const data = await res.json();
 
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(409);
       expect(data.error).toContain('exists');
       expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('already exists'));
     });

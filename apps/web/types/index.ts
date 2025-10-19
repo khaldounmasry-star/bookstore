@@ -123,3 +123,21 @@ export type UserFormValues = {
 };
 
 export type UserFormErrors = Partial<Record<keyof UserFormValues, string>>;
+
+export type FieldErrorSetter = (field: string, message: string) => void;
+
+export type SnackbarSetter = (message: string, severity?: 'error' | 'success') => void;
+
+export type AlertSeverity = 'error' | 'success';
+
+export type AlertState = {
+  message: string;
+  severity: AlertSeverity;
+};
+
+export type AddUserModalProps = {
+  open: boolean;
+  setAlert: React.Dispatch<React.SetStateAction<AlertState | null>>;
+  onClose: () => void;
+  onSubmit: (data: UserFormValues & { password: string }) => Promise<void> | void;
+};

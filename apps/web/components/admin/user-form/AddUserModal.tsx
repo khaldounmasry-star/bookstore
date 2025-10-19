@@ -7,24 +7,18 @@ import {
   DialogActions,
   TextField,
   Button,
-  Stack,
+  Stack
 } from '@mui/material';
 import { useState, FC } from 'react';
-import { User, UserFormValues, UserFormErrors } from '../../../types';
-import { validateUser } from '../../../lib';
+import { UserFormValues, UserFormErrors, AddUserModalProps } from '../../../types';
+import { validateUser, handleUserApiError } from '../../../lib';
 
-type AddUserModalProps = {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (data: Omit<User, 'id' | 'role'> & { password: string }) => Promise<void> | void;
-};
-
-export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit }) => {
+export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit, setAlert }) => {
   const [form, setForm] = useState<UserFormValues>({
     firstName: '',
     lastName: '',
     email: '',
-    password: '',
+    password: ''
   });
   const [errors, setErrors] = useState<UserFormErrors>({});
   const [loading, setLoading] = useState(false);
@@ -42,10 +36,17 @@ export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit })
     }
 
     setLoading(true);
+
     try {
       await onSubmit(form);
       setForm({ firstName: '', lastName: '', email: '', password: '' });
       onClose();
+    } catch (error) {
+      handleUserApiError(
+        error,
+        (field, message) => setErrors(prev => ({ ...prev, [field]: message })),
+        msg => setAlert({ message: msg, severity: 'error' })
+      );
     } finally {
       setLoading(false);
     }

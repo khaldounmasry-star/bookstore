@@ -99,7 +99,7 @@ users.post(
     const existing = await prisma.person.findUnique({ where: { email } });
     if (existing) {
       logger.error(`Admin creation failed: ${email} already exists`);
-      return c.json({ error: 'Email already exists' }, 400);
+      return c.json({ error: 'Admin already exists' }, 409);
     }
     const hash = await bcrypt.hash(password, 10);
 
