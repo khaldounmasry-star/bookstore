@@ -112,3 +112,12 @@ export type CreateAdminResponse = {
   message: string;
   admin: User;
 };
+
+export type UserFormValues = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+};
+
+export type UserFormErrors = Partial<Record<keyof UserFormValues, string>>;

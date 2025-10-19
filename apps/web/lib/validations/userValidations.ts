@@ -1,11 +1,4 @@
-export type UserFormValues = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-};
-
-export type UserFormErrors = Partial<Record<keyof UserFormValues, string>>;
+import { UserFormErrors, UserFormValues } from '../../types';
 
 export const validateUser = (values: UserFormValues): UserFormErrors => {
   const errors: UserFormErrors = {};

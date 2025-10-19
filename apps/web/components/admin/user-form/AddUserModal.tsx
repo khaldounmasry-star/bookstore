@@ -7,10 +7,11 @@ import {
   DialogActions,
   TextField,
   Button,
-  Stack
+  Stack,
 } from '@mui/material';
 import { useState, FC } from 'react';
-import { User } from '../../../types';
+import { User, UserFormValues, UserFormErrors } from '../../../types';
+import { validateUser } from '../../../lib';
 
 type AddUserModalProps = {
   open: boolean;
@@ -19,20 +20,27 @@ type AddUserModalProps = {
 };
 
 export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit }) => {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<UserFormValues>({
     firstName: '',
     lastName: '',
     email: '',
-    password: ''
+    password: '',
   });
-
+  const [errors, setErrors] = useState<UserFormErrors>({});
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: '' });
   };
 
   const handleSubmit = async () => {
+    const validation = validateUser(form);
+    if (Object.keys(validation).length > 0) {
+      setErrors(validation);
+      return;
+    }
+
     setLoading(true);
     try {
       await onSubmit(form);
@@ -55,6 +63,8 @@ export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit })
             onChange={handleChange}
             fullWidth
             required
+            error={!!errors.firstName}
+            helperText={errors.firstName}
           />
           <TextField
             name="lastName"
@@ -63,6 +73,8 @@ export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit })
             onChange={handleChange}
             fullWidth
             required
+            error={!!errors.lastName}
+            helperText={errors.lastName}
           />
           <TextField
             name="email"
@@ -72,6 +84,8 @@ export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit })
             onChange={handleChange}
             fullWidth
             required
+            error={!!errors.email}
+            helperText={errors.email}
           />
           <TextField
             name="password"
@@ -81,6 +95,8 @@ export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit })
             onChange={handleChange}
             fullWidth
             required
+            error={!!errors.password}
+            helperText={errors.password}
           />
         </Stack>
       </DialogContent>
