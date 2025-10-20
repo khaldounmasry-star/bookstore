@@ -55,8 +55,6 @@ All pages use **SSR or SSG** with **revalidation**, keeping client components to
 | Format | **Prettier** | Code formatting for consistent style |
 | Accessibility | **Evinced** | Checks for accessibility issues on every page |
 
----
-
 ## Monorepo Structure
 
 ```bash
@@ -84,10 +82,29 @@ bookstore/
 
 #### Admin
 
-- CRUD for Books and Covers (**Not Implemented**)
-- Super Admin can manage Users
+- CRUD for Books (**delete only**), Covers and Users
+- Only Super Admins can manage Users - menu item is visible for Super Admins - redirection for other user types
+- Super Admin and Admins can manage Books and Covers - redirection for normal users
+- Frontend and backend validations
 - Confirmation modals and snackbars
 - Role-aware sidebar navigation
+- Signing up on the frontend creates a regular user but can be promoted to Admin on the dashboard
+- Admins can be demoted to regular users on the dashboard
+##### Super Admin (locked):
+```bash
+Email: superadmin@bookstore.com  
+Password: supersecret
+```
+##### Admin (can be managed by super admin):
+```bash
+Email: khalma@randommail.com  
+Password: test1234
+```
+##### User (can be managed by super admin):
+```bash
+Email: khalm@gmail.com 
+Password: test1234
+```
 
 #### Dev
 
@@ -101,14 +118,36 @@ Next.js 15.5
 - Built on App Router
 - Server Components by default; client components only for interactive UI
 - Dynamic routes:
-  - / home page with option to sort and filter
+  - / home page (SSR) with option to sort and filter (CSR)
   - /books/[id] → Book detail (SSR)
-  - /search → Server-side search
+  - /search → SSR search
   - /signin allows admins, super admins and users to authenticate
   - /signup allows users to create accounts
-  - /admin/... → Admin portal
+  - /admin/ admin home page (admins + super admins)
+  - /admin/books books management page (admins + super admins)
+  - admin/books/covers covers management page (admins + super admins)
+  - admin/users users management page (super admins only)
 - Custom Material UI theme and palette
 - Framer Motion for animations
+
+## Frontend Nuances
+By default, Next/Image blocks serving external images unless the domain is explicitly whitelisted in the config, (known behavior since Next.js 13), if you want to add covers from other domains please make sure you have it in [next.config.js](./apps/web/next.config.js).
+At the moment only picsum is whitelisted
+```
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos'
+      }
+    ]
+  }
+};
+
+export default nextConfig;
+```
 
 ## Backend (Hono API)
 Lightweight REST API serving JSON responses to the frontend.
@@ -257,6 +296,7 @@ Only implemented on the backend
 
 ## Future improvements
 #### API
+- better table design (e.g. separate genre table)
 - Implement Update Password endpoint
 - Create postman tests
 - Containerization using Docker
