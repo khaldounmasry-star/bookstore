@@ -263,7 +263,6 @@ Only implemented on the backend
 #### WEB
 - Refactor + Separation of concerns
 - Fully implement Books admin actions
-- Fully implement Covers admin actions
 - Implement unit and integration tests using jest and react testing library
 - Implement E2E tests using Playwright or Cypress
 - Containerization using Docker
