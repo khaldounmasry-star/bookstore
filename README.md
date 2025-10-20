@@ -231,6 +231,8 @@ for API
     - Docker to use the MySQL 8.4 official image
     - Docker creates container named bookstore-db
     - Docker will restart the container automatically if it stops or the host reboots
+- install the monorepo packages
+```pnpm install```
 - go to apps/api
 ```cd apps/api```
 - **(First run only)** seed to the database
