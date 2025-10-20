@@ -235,7 +235,7 @@ for API
 ```pnpm install```
 - go to apps/api
 ```cd apps/api```
-- generate prisma client
+- **(First run only)** generate prisma client
 ```pnpm db:generate```
 - **(First run only)** seed to the database
 ```pnpm db:seed```
