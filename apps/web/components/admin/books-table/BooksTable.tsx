@@ -19,6 +19,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { FC } from 'react';
 import { Column, BooksTableProps, Book } from '../../../types';
 import { useBooksTable } from '../../../hooks/useBooksTable';
+import { ConfirmationModal } from '../confirmation-modal';
+import { ActionNotification } from '../action-notification';
+import { useBookDeletion } from '../../../hooks/useBookDeletion';
 
 const columns: Column[] = [
   { id: 'title', label: 'Title' },
@@ -63,6 +66,19 @@ export const BooksTable: FC<BooksTableProps> = ({ books }) => {
     onPageChange,
     onRowsPerPageChange
   } = useBooksTable(books);
+
+  const {
+    loading,
+    success,
+    alert,
+    confirmOpen,
+    selectedBook,
+    openConfirmDialog,
+    closeConfirmDialog,
+    handleConfirmDelete,
+    resetNotificationsCallbacks
+  } = useBookDeletion();
+
   return (
     <Box sx={{ mt: 3 }}>
       <Paper>
@@ -121,7 +137,10 @@ export const BooksTable: FC<BooksTableProps> = ({ books }) => {
                           <EditIcon fontSize="medium" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title={`Delete ${book.title}`}>
+                      <Tooltip
+                        title={`Delete ${book.title}`}
+                        onClick={() => openConfirmDialog(book)}
+                      >
                         <IconButton color="error" size="medium">
                           <DeleteIcon fontSize="medium" />
                         </IconButton>
@@ -145,6 +164,28 @@ export const BooksTable: FC<BooksTableProps> = ({ books }) => {
           sx={{ px: 2 }}
         />
       </Paper>
+      <ConfirmationModal
+        open={confirmOpen}
+        title="Confirm Deletion"
+        message={
+          <>
+            Are you sure you want to delete user: <b>{selectedBook?.title}</b>?
+          </>
+        }
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        loading={loading}
+        onConfirm={handleConfirmDelete}
+        onClose={closeConfirmDialog}
+      />
+      {(success || alert) && (
+        <ActionNotification
+          success={success}
+          callbacks={resetNotificationsCallbacks()}
+          successMessage={`Book ${selectedBook?.title} deleted successfully!`}
+          alert={alert}
+        />
+      )}
     </Box>
   );
 };

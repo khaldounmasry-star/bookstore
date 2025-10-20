@@ -25,7 +25,7 @@ export default async function AdminBooksPage() {
         </Button>
       </Stack>
       <Typography color="text.secondary" mb={2}>
-        Only admins can manage books.
+        Only admins can manage books - Only delete works.
       </Typography>
       <BooksTable books={books} />
     </Box>
