@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export interface Cover {
+  id: number;
   imageUrl: string;
 }
 
@@ -190,3 +191,12 @@ export type BooksTableProps = {
 };
 
 export type Column = { id: keyof Book; label: string; numeric?: boolean };
+
+export interface CoverListProps {
+  books: Book[];
+  selectedBookId: number;
+}
+
+export interface CoversManagerProps {
+  books: Book[];
+}
