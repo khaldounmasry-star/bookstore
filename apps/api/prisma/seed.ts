@@ -24,9 +24,9 @@ async function main() {
 
   const admin = await prisma.person.create({
     data: {
-      firstName: 'Khaldoun',
-      lastName: 'Masry',
-      email: 'khaldounmasry@gmail.com',
+      firstName: 'Khal',
+      lastName: 'Ma',
+      email: 'khalma@randommail.com',
       role: Role.ADMIN,
       passwords: {
         create: [{ hash: commonHash }]
@@ -38,7 +38,7 @@ async function main() {
     data: {
       firstName: 'Khal',
       lastName: 'M',
-      email: 'khaldounm@gmail.com',
+      email: 'khalm@gmail.com',
       role: Role.USER,
       passwords: {
         create: [{ hash: commonHash }]
