@@ -25,8 +25,15 @@ export const CoversList = ({ books, selectedBookId }: CoverListProps) => {
     setCovers(selectedBook?.covers ?? []);
   }, [selectedBookId, books]);
 
-  const { updatingId, handleImageChange, handleUpdate, alert, success, resetUpdateNotifications } =
-    useCoverUpdate(setCovers);
+  const {
+    updatingId,
+    handleImageChange,
+    handleUpdate,
+    alert,
+    success,
+    resetUpdateNotifications,
+    invalidMap
+  } = useCoverUpdate(setCovers);
 
   const {
     confirmOpen,
@@ -58,22 +65,44 @@ export const CoversList = ({ books, selectedBookId }: CoverListProps) => {
               }}
             >
               <Stack direction="row" alignItems="center" spacing={2}>
-                <CardMedia
-                  component="img"
-                  src={cover.imageUrl}
-                  alt={`Cover ${cover.id}`}
-                  sx={{
-                    width: 120,
-                    height: 160,
-                    objectFit: 'cover',
-                    borderRadius: 2
-                  }}
-                />
+                <Box>
+                  {cover.imageUrl ? (
+                    <CardMedia
+                      component="img"
+                      src={cover.imageUrl}
+                      alt={`Cover ${cover.id}`}
+                      sx={{
+                        width: 120,
+                        height: 160,
+                        objectFit: 'cover',
+                        borderRadius: 2
+                      }}
+                    />
+                  ) : (
+                    <Box
+                      sx={{
+                        width: 120,
+                        height: 160,
+                        borderRadius: 2,
+                        bgcolor: 'grey.100',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Typography variant="body2" color="text.secondary" textAlign="center">
+                        Insert an image URL
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
                 <TextField
                   label="Image URL"
                   variant="outlined"
                   value={cover.imageUrl}
                   onChange={e => handleImageChange(cover.id, e.target.value)}
+                  error={!!invalidMap[cover.id]}
+                  helperText={invalidMap[cover.id] || ' '}
                   sx={{ minWidth: 400 }}
                 />
               </Stack>
