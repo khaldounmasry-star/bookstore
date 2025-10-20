@@ -200,3 +200,12 @@ export interface CoverListProps {
 export interface CoversManagerProps {
   books: Book[];
 }
+
+export type AddCoverProps = {
+  bookId: number;
+  imageUrl: string;
+};
+
+export type AddCoverFormProps = {
+  selectedBookId: number;
+};

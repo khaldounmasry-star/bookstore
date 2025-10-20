@@ -1,10 +1,11 @@
+import { AddCoverProps } from '../../types';
 import { apiClient } from './client';
 
 export const coversApi = {
-  addCovers: (bookId: number, data: { imageUrl?: string; imageUrls?: string[] }) =>
+  addCover: ({ bookId, imageUrl }: AddCoverProps) =>
     apiClient['request'](`/books/${bookId}/covers`, {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify({ imageUrl })
     }),
 
   updateCover: (coverId: number, data: { imageUrl: string }) =>
