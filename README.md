@@ -264,5 +264,5 @@ Only implemented on the backend
 - Implement E2E tests using Playwright or Cypress
 - Containerization using Docker
 
-## Licence
+## License
 This project is licensed under the [MIT License](./LICENSE) © 2025
