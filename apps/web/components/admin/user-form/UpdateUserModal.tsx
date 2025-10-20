@@ -11,10 +11,11 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  SelectChangeEvent
 } from '@mui/material';
 import { useState, FC, useEffect } from 'react';
-import { UserFormErrors, UpdateUserModalProps, ExistingUserPayload, Role } from '../../../types';
+import { UserFormErrors, UpdateUserModalProps, Role, User } from '../../../types';
 import { validateUser, handleUserApiError } from '../../../lib';
 
 export const UpdateUserModal: FC<UpdateUserModalProps> = ({
@@ -25,7 +26,7 @@ export const UpdateUserModal: FC<UpdateUserModalProps> = ({
   setAlert
 }) => {
   const { id, firstName, lastName, email, role } = user;
-  const [form, setForm] = useState<ExistingUserPayload>({
+  const [form, setForm] = useState<User>({
     id,
     firstName,
     lastName,
@@ -47,10 +48,12 @@ export const UpdateUserModal: FC<UpdateUserModalProps> = ({
     }
   }, [user]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.name, e.target.value);
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: '' });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<Role>
+  ) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   const handleSubmit = async () => {
@@ -64,7 +67,7 @@ export const UpdateUserModal: FC<UpdateUserModalProps> = ({
 
     try {
       await onSubmit(form);
-      setForm({ firstName: '', lastName: '', email: '', role: Role.EMPTY });
+      setForm({ id: '', firstName: '', lastName: '', email: '', role: Role.EMPTY });
       onClose();
     } catch (error) {
       handleUserApiError(
@@ -78,7 +81,15 @@ export const UpdateUserModal: FC<UpdateUserModalProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="xs"
+      fullWidth
+      disableEnforceFocus={false}
+      disableAutoFocus={false}
+      disableRestoreFocus={false}
+    >
       <DialogTitle>Update user: {firstName}</DialogTitle>
       <DialogContent dividers>
         <Stack spacing={2} mt={1}>

@@ -112,8 +112,6 @@ export type UsersTableProps = {
 
 export type NewUserPayload = Omit<User, 'id' | 'role'> & { password: string };
 
-export type ExistingUserPayload = Partial<User>;
-
 export type CreateAdminResponse = {
   message: string;
   admin: User;
@@ -158,7 +156,7 @@ export type UpdateUserModalProps = {
   open: boolean;
   setAlert: React.Dispatch<React.SetStateAction<AlertState | undefined>>;
   onClose: () => void;
-  onSubmit: (data: NewUserPayload) => Promise<void> | void;
+  onSubmit: (data: User) => Promise<void> | void;
 };
 
 export type ConfirmationModalProps = {

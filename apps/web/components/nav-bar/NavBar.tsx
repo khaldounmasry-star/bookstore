@@ -47,7 +47,6 @@ export const NavBar = () => {
                 alt="Logo"
                 width={120}
                 height={40}
-                priority
                 hidden={/admin/i.test(pathname)}
               />
             </Link>

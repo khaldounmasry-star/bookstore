@@ -7,7 +7,8 @@ import {
   DialogActions,
   TextField,
   Button,
-  Stack
+  Stack,
+  Box
 } from '@mui/material';
 import { useState, FC } from 'react';
 import { UserFormErrors, AddUserModalProps, NewUserPayload } from '../../../types';
@@ -56,56 +57,69 @@ export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit, s
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle>Add New User</DialogTitle>
       <DialogContent dividers>
-        <Stack spacing={2} mt={1}>
-          <TextField
-            name="firstName"
-            label="First Name"
-            value={form.firstName}
-            onChange={handleChange}
-            fullWidth
-            required
-            error={!!errors.firstName}
-            helperText={errors.firstName}
-          />
-          <TextField
-            name="lastName"
-            label="Last Name"
-            value={form.lastName}
-            onChange={handleChange}
-            fullWidth
-            required
-            error={!!errors.lastName}
-            helperText={errors.lastName}
-          />
-          <TextField
-            name="email"
-            label="Email"
-            type="email"
-            value={form.email}
-            onChange={handleChange}
-            fullWidth
-            required
-            error={!!errors.email}
-            helperText={errors.email}
-          />
-          <TextField
-            name="password"
-            label="Password"
-            type="password"
-            value={form.password}
-            onChange={handleChange}
-            fullWidth
-            required
-            error={!!errors.password}
-            helperText={errors.password}
-          />
-        </Stack>
+        <Box
+          component="form"
+          noValidate
+          onSubmit={e => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
+          <Stack spacing={2} mt={1}>
+            <TextField
+              name="firstName"
+              label="First Name"
+              value={form.firstName}
+              onChange={handleChange}
+              fullWidth
+              required
+              autoComplete="new-first-name"
+              error={!!errors.firstName}
+              helperText={errors.firstName}
+            />
+            <TextField
+              name="lastName"
+              label="Last Name"
+              value={form.lastName}
+              onChange={handleChange}
+              fullWidth
+              required
+              autoComplete="new-last-name"
+              error={!!errors.lastName}
+              helperText={errors.lastName}
+            />
+            <TextField
+              name="email"
+              label="Email"
+              type="email"
+              value={form.email}
+              autoComplete="new-email"
+              onChange={handleChange}
+              fullWidth
+              required
+              error={!!errors.email}
+              helperText={errors.email}
+            />
+            <TextField
+              name="password"
+              label="Password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+              autoComplete="new-password"
+              fullWidth
+              required
+              error={!!errors.password}
+              helperText={errors.password}
+            />
+          </Stack>
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} disabled={loading}>
           Cancel
         </Button>
-        <Button variant="contained" onClick={handleSubmit} disabled={loading}>
+        <Button variant="contained" type="submit" onClick={handleSubmit} disabled={loading}>
           {loading ? 'Adding...' : 'Add User'}
         </Button>
       </DialogActions>

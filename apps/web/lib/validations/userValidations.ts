@@ -21,7 +21,7 @@ export const validateUser = (values: UserFormValues): UserFormErrors => {
     errors.email = 'Invalid email format';
   }
 
-  if (!update) {
+  if (!update && password) {
     if (!password.trim()) {
       errors.password = 'Password is required';
     } else if (password.length < 6) {

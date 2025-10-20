@@ -1,7 +1,6 @@
 import { apiClient } from './client';
 import {
   CreateAdminResponse,
-  ExistingUserPayload,
   LoginResponse,
   NewUserPayload,
   SignUpResponse,
@@ -36,7 +35,7 @@ export const usersApi = {
     });
   },
 
-  updateUser: async (user: ExistingUserPayload) => {
+  updateUser: async (user: User) => {
     const client = await init();
     return client.request<UpdateUserResponse>(`/users/${user.id}`, {
       method: 'PUT',
