@@ -37,12 +37,6 @@ export const AddUser: FC = () => {
         setAlert={setAlert}
       />
 
-      <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
-        <Alert severity="success" variant="filled">
-          Admin {user} added successfully!
-        </Alert>
-      </Snackbar>
-
       {(success || alert) && (
         <ActionNotification
           success={success}

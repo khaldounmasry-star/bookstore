@@ -7,29 +7,54 @@ import {
   DialogActions,
   TextField,
   Button,
-  Stack
+  Stack,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
-import { useState, FC } from 'react';
-import { UserFormErrors, AddUserModalProps, NewUserPayload } from '../../../types';
+import { useState, FC, useEffect } from 'react';
+import { UserFormErrors, UpdateUserModalProps, ExistingUserPayload, Role } from '../../../types';
 import { validateUser, handleUserApiError } from '../../../lib';
 
-export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit, setAlert }) => {
-  const [form, setForm] = useState<NewUserPayload>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: ''
+export const UpdateUserModal: FC<UpdateUserModalProps> = ({
+  user,
+  open,
+  onClose,
+  onSubmit,
+  setAlert
+}) => {
+  const { id, firstName, lastName, email, role } = user;
+  const [form, setForm] = useState<ExistingUserPayload>({
+    id,
+    firstName,
+    lastName,
+    email,
+    role
   });
   const [errors, setErrors] = useState<UserFormErrors>({});
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (user) {
+      setForm({
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role
+      });
+    }
+  }, [user]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.name, e.target.value);
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: '' });
   };
 
   const handleSubmit = async () => {
-    const validation = validateUser(form);
+    const validation = validateUser({ ...form, update: true });
     if (Object.keys(validation).length > 0) {
       setErrors(validation);
       return;
@@ -39,7 +64,7 @@ export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit, s
 
     try {
       await onSubmit(form);
-      setForm({ firstName: '', lastName: '', email: '', password: '' });
+      setForm({ firstName: '', lastName: '', email: '', role: Role.EMPTY });
       onClose();
     } catch (error) {
       handleUserApiError(
@@ -54,7 +79,7 @@ export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit, s
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>Add New User</DialogTitle>
+      <DialogTitle>Update user: {firstName}</DialogTitle>
       <DialogContent dividers>
         <Stack spacing={2} mt={1}>
           <TextField
@@ -88,17 +113,20 @@ export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit, s
             error={!!errors.email}
             helperText={errors.email}
           />
-          <TextField
-            name="password"
-            label="Password"
-            type="password"
-            value={form.password}
-            onChange={handleChange}
-            fullWidth
-            required
-            error={!!errors.password}
-            helperText={errors.password}
-          />
+          <FormControl fullWidth>
+            <InputLabel id="role-select-label">Role</InputLabel>
+            <Select
+              labelId="role-select-label"
+              id="role-select"
+              name="role"
+              value={form.role}
+              label="Role"
+              onChange={handleChange}
+            >
+              <MenuItem value={Role.ADMIN}>{Role.ADMIN}</MenuItem>
+              <MenuItem value={Role.USER}>{Role.USER}</MenuItem>
+            </Select>
+          </FormControl>
         </Stack>
       </DialogContent>
       <DialogActions>
@@ -106,7 +134,7 @@ export const AddUserModal: FC<AddUserModalProps> = ({ open, onClose, onSubmit, s
           Cancel
         </Button>
         <Button variant="contained" onClick={handleSubmit} disabled={loading}>
-          {loading ? 'Adding...' : 'Add User'}
+          {loading ? 'Update...' : 'Update User'}
         </Button>
       </DialogActions>
     </Dialog>

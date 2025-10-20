@@ -16,11 +16,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 import EditIcon from '@mui/icons-material/Edit';
 import { FC, useState } from 'react';
-import { UsersTableProps, Role, User } from '../../../types';
+import { UsersTableProps, Role, User, AlertState } from '../../../types';
 import { usersApi } from '../../../lib';
 import { useRouter } from 'next/navigation';
 import { ConfirmationModal } from '../confirmation-modal';
 import { ActionNotification } from '../action-notification';
+import { UpdateUserModal } from '../user-form';
 
 export const UsersTable: FC<UsersTableProps> = ({ users }) => {
   const router = useRouter();
@@ -28,8 +29,9 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
   const [success, setSuccess] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
+  const [editOpen, setUpdateOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState<AlertState | undefined>(undefined);
 
   const openConfirmDialog = (user: User) => {
     setSelectedUser(user);
@@ -40,13 +42,20 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
     setConfirmOpen(false);
   };
 
-  const openEditDialog = (user: User) => {
+  const openUpdateDialog = (user: User) => {
     setSelectedUser(user);
-    setEditOpen(true);
+    setUpdateOpen(true);
   };
 
-  const closeEditDialog = () => {
-    setEditOpen(false);
+  const closeUpdateDialog = () => {
+    setUpdateOpen(false);
+  };
+
+  const handleUpdateUser = async (data: User) => {
+    const { user } = await usersApi.updateUser(data);
+    setSelectedUser(user);
+    setSuccess(true);
+    router.refresh();
   };
 
   const handleConfirmDelete = async () => {
@@ -117,7 +126,7 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
                           <IconButton
                             color="info"
                             size="medium"
-                            onClick={() => openEditDialog(user)}
+                            onClick={() => openUpdateDialog(user)}
                           >
                             <EditIcon fontSize="medium" />
                           </IconButton>
@@ -146,6 +155,15 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
           </TableBody>
         </Table>
       </TableContainer>
+      {selectedUser && (
+        <UpdateUserModal
+          user={selectedUser}
+          open={editOpen}
+          onClose={closeUpdateDialog}
+          onSubmit={handleUpdateUser}
+          setAlert={setAlert}
+        />
+      )}
       <ConfirmationModal
         open={confirmOpen}
         title="Confirm Deletion"
@@ -164,11 +182,16 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
         onConfirm={handleConfirmDelete}
         onClose={closeConfirmDialog}
       />
-      {success && (
+      {(success || alert) && (
         <ActionNotification
           success={success}
-          callbacks={[() => setSuccess(false), () => setSelectedUser(null)]}
+          callbacks={[
+            () => setSuccess(false),
+            () => setSelectedUser(null),
+            () => setAlert(undefined)
+          ]}
           successMessage={`User ${selectedUser?.firstName} deleted successfully!`}
+          alert={alert}
         />
       )}
     </Box>

@@ -1,7 +1,7 @@
 import { UserFormErrors, UserFormValues } from '../../types';
 
 export const validateUser = (values: UserFormValues): UserFormErrors => {
-  const { signIn = false, firstName, lastName, email, password } = values;
+  const { signIn = false, update = false, firstName, lastName, email, password } = values;
   const errors: UserFormErrors = {};
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -21,10 +21,12 @@ export const validateUser = (values: UserFormValues): UserFormErrors => {
     errors.email = 'Invalid email format';
   }
 
-  if (!password.trim()) {
-    errors.password = 'Password is required';
-  } else if (password.length < 6) {
-    errors.password = 'Password must be at least 6 characters';
+  if (!update) {
+    if (!password.trim()) {
+      errors.password = 'Password is required';
+    } else if (password.length < 6) {
+      errors.password = 'Password must be at least 6 characters';
+    }
   }
 
   return errors;

@@ -54,6 +54,7 @@ export interface SearchFilterDrawerProps {
 }
 
 export enum Role {
+  EMPTY = '',
   ADMIN = 'ADMIN',
   SUPER_ADMIN = 'SUPER_ADMIN',
   USER = 'USER'
@@ -125,10 +126,11 @@ export type UpdateUserResponse = {
 
 export type UserFormValues = {
   signIn?: boolean;
+  update?: boolean;
   firstName?: string;
   lastName?: string;
   email: string;
-  password: string;
+  password?: string;
 };
 
 export type UserFormErrors = Partial<Record<keyof UserFormValues, string>>;
@@ -145,6 +147,14 @@ export type AlertState = {
 };
 
 export type AddUserModalProps = {
+  open: boolean;
+  setAlert: React.Dispatch<React.SetStateAction<AlertState | undefined>>;
+  onClose: () => void;
+  onSubmit: (data: NewUserPayload) => Promise<void> | void;
+};
+
+export type UpdateUserModalProps = {
+  user: User;
   open: boolean;
   setAlert: React.Dispatch<React.SetStateAction<AlertState | undefined>>;
   onClose: () => void;
