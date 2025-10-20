@@ -11,9 +11,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   }
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'grey.50' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'grey.50', overflowX: 'hidden' }}>
       <SideBar role={user.role} />
-      <Box component="main" sx={{ flexGrow: 1, p: 4 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 4, minWidth: 0 }}>
         {children}
       </Box>
     </Box>

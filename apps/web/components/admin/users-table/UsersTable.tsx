@@ -28,6 +28,7 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
   const [success, setSuccess] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const openConfirmDialog = (user: User) => {
@@ -35,13 +36,17 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
     setConfirmOpen(true);
   };
 
-  const openEditDialog = (user: User) => {
-    setSelectedUser(user);
-    setConfirmOpen(true);
-  };
-
   const closeConfirmDialog = () => {
     setConfirmOpen(false);
+  };
+
+  const openEditDialog = (user: User) => {
+    setSelectedUser(user);
+    setEditOpen(true);
+  };
+
+  const closeEditDialog = () => {
+    setEditOpen(false);
   };
 
   const handleConfirmDelete = async () => {
@@ -71,8 +76,8 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
 
   return (
     <Box sx={{ marginTop: 3 }}>
-      <TableContainer component={Paper} sx={{ borderRadius: 3, overflow: 'hidden' }}>
-        <Table aria-label="users table">
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="Users data table">
           <TableHead sx={{ bgcolor: 'grey.100' }}>
             <TableRow>
               <TableCell sx={{ fontWeight: 600 }}>First Name</TableCell>
