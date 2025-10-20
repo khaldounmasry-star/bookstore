@@ -207,7 +207,7 @@ enum Role {
 ## Authentication
 
 - JWT tokens stored as secure cookies (prod only)
-- due to time limitations no backend tracking for the JWT token they just die after 7 days (hard sign out)
+- For simplicity and due to time constraints, JWT tokens are not tracked on the backend. They expire automatically after 7 or 30 days depending on the “Remember Me” option
 - authMiddleware parses token and sets ctx.user
 - requireRole() restricts endpoint access
 - Frontend redirects unauthorized users

@@ -18,7 +18,7 @@ export const SignInForm = () => {
     values: { email, password },
     errors: { emailError, passwordError },
     isSubmitting,
-    handlers: { setEmail, setPassword, handleSubmit }
+    handlers: { setEmail, setPassword, handleSubmit, setExtended }
   } = useSignInForm();
 
   return (
@@ -71,7 +71,11 @@ export const SignInForm = () => {
             mb: 2
           }}
         >
-          <FormControlLabel control={<Checkbox />} label="Remember for 30 days" />
+          <FormControlLabel
+            control={<Checkbox />}
+            label="Remember me for 30 days"
+            onChange={e => setExtended((e.target as HTMLInputElement).checked)}
+          />
         </Box>
 
         <Button

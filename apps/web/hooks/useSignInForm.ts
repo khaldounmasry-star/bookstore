@@ -6,6 +6,7 @@ import { usersApi, ApiClient, setCookie, validateUser, handleUserApiError } from
 import { Role } from '../types';
 
 export const useSignInForm = () => {
+  const [extended, setExtended] = useState<boolean>(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -42,7 +43,7 @@ export const useSignInForm = () => {
 
     try {
       setIsSubmitting(true);
-      const { token: apiToken, role } = await usersApi.login({ email, password });
+      const { token: apiToken, role } = await usersApi.login({ email, password, extended });
 
       setCookie('token', apiToken);
       setCookie('role', role);
@@ -65,6 +66,6 @@ export const useSignInForm = () => {
     values: { email, password },
     errors: { emailError, passwordError },
     isSubmitting,
-    handlers: { setEmail, setPassword, handleSubmit }
+    handlers: { setEmail, setPassword, setExtended, handleSubmit }
   };
 };

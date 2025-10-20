@@ -16,7 +16,7 @@ export const usersApi = {
       body: JSON.stringify(data)
     }),
 
-  login: (data: { email: string; password: string }) =>
+  login: (data: { email: string; password: string, extended: boolean }) =>
     apiClient.request<LoginResponse>(`/users/login`, {
       method: 'POST',
       body: JSON.stringify(data)
