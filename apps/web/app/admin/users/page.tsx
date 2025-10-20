@@ -4,10 +4,11 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { UsersTable } from '../../../components/admin/users-table';
 import { AddUser } from '../../../components/admin/user-form';
+import { Role } from '../../../types';
 
 export default async function AdminUsersPage() {
   const user = await getCurrentUser();
-  if (user?.role !== 'SUPER_ADMIN') redirect('/admin');
+  if (user?.role !== Role.SUPER_ADMIN) redirect('/admin');
 
   const users = await usersApi.fetchUsers();
 

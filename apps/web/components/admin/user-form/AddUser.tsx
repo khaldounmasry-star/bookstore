@@ -1,7 +1,7 @@
 'use client';
 
 import { FC, useState } from 'react';
-import { Button, Stack, Snackbar, Alert } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { AlertState, NewUserPayload } from '../../../types';
 import { AddUserModal } from './AddUserModal';
 import { usersApi } from '../../../lib';
