@@ -235,6 +235,8 @@ for API
 ```pnpm install```
 - go to apps/api
 ```cd apps/api```
+- generate prisma client
+```pnpm db:generate```
 - **(First run only)** seed to the database
 ```pnpm db:seed```
 - **(optional)** if you want to the see the database using Prisma Studio available [locally](http://localhost:5555/)

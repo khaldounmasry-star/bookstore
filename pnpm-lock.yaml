@@ -123,9 +123,6 @@ importers:
       '@mui/material-nextjs':
         specifier: ^7.3.3
         version: 7.3.3(@emotion/cache@11.14.0)(@emotion/react@11.14.0(@types/react@19.1.0)(react@19.1.0))(@types/react@19.1.0)(next@15.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       framer-motion:
         specifier: ^12.23.24
         version: 12.23.24(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -204,37 +201,6 @@ importers:
         version: 8.40.0(eslint@9.34.0(jiti@2.6.1))(typescript@5.9.2)
 
   packages/typescript-config: {}
-
-  packages/ui:
-    dependencies:
-      react:
-        specifier: ^19.1.0
-        version: 19.1.0
-      react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
-    devDependencies:
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      '@types/node':
-        specifier: ^22.15.3
-        version: 22.15.3
-      '@types/react':
-        specifier: 19.1.0
-        version: 19.1.0
-      '@types/react-dom':
-        specifier: 19.1.1
-        version: 19.1.1(@types/react@19.1.0)
-      eslint:
-        specifier: ^9.34.0
-        version: 9.34.0(jiti@2.6.1)
-      typescript:
-        specifier: 5.9.2
-        version: 5.9.2
 
 packages:
 
