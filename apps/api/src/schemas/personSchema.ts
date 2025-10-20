@@ -26,7 +26,10 @@ export const getPersonSchema = z.object({
   password: z
     .string()
     .min(6, 'Password must be at least 6 characters')
-    .max(24, 'Password too long')
+    .max(24, 'Password too long'),
+  extended: z
+    .boolean()
+    .optional()
 });
 
 export const updatePersonSchema = createPersonSchema

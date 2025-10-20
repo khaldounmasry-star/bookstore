@@ -109,7 +109,8 @@ docs.get('/swagger.json', (c) =>
           required: ['email', 'password'],
           properties: {
             email: { type: 'string', format: 'email' },
-            password: { type: 'string', format: 'password' }
+            password: { type: 'string', format: 'password' },
+            extended: { type: 'boolean' }
           }
         },
         Cover: {

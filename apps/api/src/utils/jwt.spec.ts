@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { signToken, verifyToken } from '@utils/jwt';
 import { logger } from '@utils/logger';
+import { Role } from '@prisma/client';
 
 jest.mock('jsonwebtoken', () => ({
   sign: jest.fn(() => 'signed.jwt.token'),
@@ -17,7 +18,7 @@ describe('JWT utils', () => {
   afterEach(() => jest.clearAllMocks());
 
   it('signToken calls jwt.sign with correct params', () => {
-    const payload = { id: 1, email: 'a@b.com' };
+    const payload = { id: 1, email: 'a@b.com', role: Role.USER  };
     const token = signToken(payload);
     expect(token).toBe('signed.jwt.token');
     expect(jwt.sign).toHaveBeenCalledWith(

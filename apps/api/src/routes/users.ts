@@ -43,7 +43,7 @@ users.post('/register', validateMiddleware(createPersonSchema), async (c) => {
 
 users.post('/login', validateMiddleware(getPersonSchema), async (c) => {
   const body = c.get('validated') as z.infer<typeof getPersonSchema>;
-  const { email, password } = body;
+  const { email, password, extended } = body;
 
   const person = await prisma.person.findUnique({
     where: { email },
@@ -70,7 +70,7 @@ users.post('/login', validateMiddleware(getPersonSchema), async (c) => {
     return c.json({ error: 'Invalid password' }, 401);
   }
 
-  const token = signToken({ id: person.id, role: person.role, email: person.email });
+  const token = signToken({ id: person.id, role: person.role, email: person.email }, extended ? 60 * 60 * 24 * 30 : undefined);
   logger.info(`User logged in: ${email}`);
 
   return c.json({ message: 'Login success', role: person.role, token });

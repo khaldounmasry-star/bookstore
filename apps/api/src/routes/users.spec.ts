@@ -1,8 +1,10 @@
 import { Hono } from 'hono';
-import { users } from './users';
+import bcrypt from 'bcrypt';
+import { Role } from '@prisma/client';
 import { prisma } from '@utils/prisma';
 import { logger } from '@utils/logger';
-import bcrypt from 'bcrypt';
+import { signToken } from '@utils/jwt';
+import { users } from './users';
 
 jest.mock('@utils/prisma', () => ({
   prisma: {
@@ -118,6 +120,34 @@ describe('users routes', () => {
 
       expect(res.status).toBe(200);
       expect(data.message).toBe('Login success');
+      expect(signToken).toHaveBeenCalledWith({ id: 1, email: 'u@mail.com', role: Role.USER }, undefined);
+      expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('logged in'));
+    });
+
+    it('sets the expiration date to 30 days if extended is true', async () => {
+      (prisma.person.findUnique as jest.Mock).mockResolvedValue({
+        id: 1,
+        email: 'u@mail.com',
+        role: 'USER'
+      });
+      (prisma.password.findFirst as jest.Mock).mockResolvedValue({ hash: 'hashed_pw' });
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+
+      const res = await app.request('/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: 'u@mail.com',
+          password: '123456',
+          extended: true
+        })
+      });
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.message).toBe('Login success');
+      expect(signToken).toHaveBeenCalledWith({ id: 1, email: 'u@mail.com', role: Role.USER }, 2592000);
+      expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('logged in'));
       expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('logged in'));
     });
 
