@@ -13,6 +13,7 @@ export interface Book {
   genre: string;
   covers: Cover[];
   price: number;
+  sku: string;
   description: string;
 }
 
@@ -183,3 +184,9 @@ export type PageProps = {
   params: Promise<any> | undefined;
   searchParams: Promise<any> | undefined;
 };
+
+export type BooksTableProps = {
+  books: Book[];
+};
+
+export type Column = { id: keyof Book; label: string; numeric?: boolean };
