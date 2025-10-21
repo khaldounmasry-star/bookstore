@@ -2,8 +2,7 @@ import { redirect } from 'next/navigation';
 import { getCurrentUser, usersApi } from '../../../lib';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { UsersTable } from '../../../components/admin/users-table';
-import { AddUser } from '../../../components/admin/user-form';
+import { UsersManager } from '../../../components/admin/users-manager';
 import { Role } from '../../../types';
 
 export default async function AdminUsersPage() {
@@ -20,8 +19,7 @@ export default async function AdminUsersPage() {
       <Typography color="text.secondary" mb={2}>
         Only super admins can manage users.
       </Typography>
-      <AddUser />
-      <UsersTable users={users} />
+      <UsersManager users={users} />
     </Box>
   );
 }

@@ -209,3 +209,7 @@ export type AddCoverProps = {
 export type AddCoverFormProps = {
   selectedBookId: number;
 };
+
+export interface UsersManagerProps {
+  users: User[];
+}
